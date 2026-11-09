@@ -1,361 +1,767 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Class 7 ICSE Maths Practice Portal</title>
-<style>
-:root{--navy:#17345b;--blue:#2864b4;--bg:#f3f6fb;--green:#16834a;--red:#c0392b}
-*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:var(--bg);color:#1d2939}
-header{background:linear-gradient(120deg,#17345b,#2864b4);color:white;padding:25px 16px;text-align:center}
-header h1{margin:0 0 7px;font-size:27px}header p{margin:0;opacity:.9}
-main{max-width:980px;margin:22px auto;padding:0 14px}.card{background:#fff;border-radius:16px;padding:22px;box-shadow:0 5px 22px #18365b12;margin-bottom:16px}
-.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:space-between}
-select,button{font-size:15px;border-radius:9px;padding:11px 13px;border:1px solid #cbd5e1}
-select{background:white;min-width:220px;max-width:100%}button{background:var(--blue);color:white;border:0;font-weight:bold;cursor:pointer}button:disabled{opacity:.5;cursor:not-allowed}
-.secondary{background:#e8eef7;color:#17345b}.pill{background:#eaf1fc;color:#214f8e;border-radius:30px;padding:7px 11px;font-size:12px;font-weight:bold}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px;margin-top:15px}
-.chapter{background:#fff;border:1px solid #d7e0ec;color:#24364b;text-align:left;min-height:72px;line-height:1.35}.chapter:hover{background:#f0f5fc;border-color:#6b98d0}
-.chapter small{display:block;color:#667085;font-weight:normal;margin-top:5px}
-.progress{height:9px;background:#e6ebf2;border-radius:9px;overflow:hidden;margin:14px 0}.bar{height:100%;background:#3b82d0;width:0}
-.question{font-size:21px;font-weight:bold;line-height:1.45;margin:20px 0}.options{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.option{background:white;color:#24364b;border:1px solid #ccd6e2;text-align:left;min-height:52px;white-space:normal}.option:hover:not(:disabled){background:#f0f5fc}
-.option.correct{background:#e4f6eb;border:2px solid var(--green);color:#12663a}.option.wrong{background:#fff0ee;border:2px solid var(--red);color:#a52b21}
-.feedback{display:none;margin-top:15px;padding:14px;border-radius:10px;line-height:1.55;background:#f1f5f9}
-.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}.small{font-size:13px;color:#667085;line-height:1.5}
-.score{font-size:32px;font-weight:bold;color:var(--navy)}.hide{display:none!important}
-@media(max-width:620px){.options{grid-template-columns:1fr}.question{font-size:19px}header h1{font-size:23px}.card{padding:17px}}
-</style></head>
-<body>
-<header><h1>Class 7 ICSE Mathematics</h1><p>Selina Concise Maths • School Practice & Exam Preparation</p></header>
-<main>
-<section class="card" id="home">
- <div class="row"><div><span class="pill">13 SYLLABUS CHAPTERS</span> <span class="pill">CLASS TEST + TERM + FINAL</span></div><span class="small">Practice at your own pace</span></div>
- <h2 style="color:#17345b;margin:15px 0 5px">Choose a Chapter</h2>
- <p class="small">Select any chapter below. Each chapter includes concept questions, calculations and school-level application/exam-style problems. Class Test 1 and 2 chapters are also part of Final Exam.</p>
- <div class="row" style="margin-top:16px"><label for="level"><b>Difficulty:</b></label><select id="level"><option value="all">All levels</option><option>Easy</option><option>Moderate</option><option>Difficult</option></select>
- <label for="mode"><b>Practice:</b></label><select id="mode"><option value="all">All questions</option><option value="application">Application / Word Problems</option><option value="concept">Concept / Exercise Questions</option></select></div>
- <div class="grid" id="chapters"></div>
- <p class="small" style="margin-top:17px"><b>Note:</b> This is a school-syllabus practice bank based on the chapter titles in the syllabus image you shared. Please compare exact exercise coverage with your current Selina edition.</p>
-</section>
-<section class="card hide" id="quiz">
- <div class="row"><span class="pill" id="qcount">Question</span><span class="pill" id="difficulty">Level</span><span class="pill" id="scoretag">Score: 0</span></div>
- <div class="progress"><div class="bar" id="bar"></div></div>
- <div class="small" id="qtype"></div><div class="question" id="question"></div>
- <div class="options" id="options"></div><div class="feedback" id="feedback"></div>
- <div class="actions"><button id="next" disabled>Next Question</button><button class="secondary" id="quit">Back to Chapters</button></div>
-</section>
-<section class="card hide" id="result" style="text-align:center">
- <h2>Practice Completed!</h2><div class="score" id="finalscore"></div><p id="remark"></p>
- <div class="actions" style="justify-content:center"><button id="retry">Retry This Chapter</button><button class="secondary" id="back">Choose Another Chapter</button></div>
-</section>
-<section class="card"><b>Quiz features</b><p class="small">Instant answer checking • Green/red answer highlighting • Step-by-step explanations • Score calculation • Difficulty filters • Application-based questions • Retake option</p></section>
-</main>
-<script>
-const chapters = [
-{name:"Simple Linear Equation",group:"Class Test 1",q:[
-["Solve: 3x + 5 = 20.",5,"Subtract 5: 3x = 15. Divide by 3: x = 5.","Easy","concept"],
-["Solve: 7x − 9 = 26.",5,"Add 9: 7x = 35. Divide by 7: x = 5.","Easy","concept"],
-["Solve: (x + 4)/3 = 6.",14,"Multiply by 3: x + 4 = 18. Hence x = 14.","Easy","concept"],
-["A number increased by 12 is 31. Find the number.",19,"Let the number be x. x + 12 = 31, so x = 19.","Easy","application"],
-["A pen costs ₹x. A notebook costs ₹18 more. If the notebook costs ₹45, find the pen's cost.",27,"Let pen cost be x. x + 18 = 45, so x = ₹27.","Moderate","application"],
-["The perimeter of a square is 68 cm. Find its side.",17,"Let side = x. 4x = 68, so x = 17 cm.","Moderate","application"],
-["Three times a number decreased by 8 is 31. Find the number.",13,"3x − 8 = 31; 3x = 39; x = 13.","Moderate","application"],
-["Solve: 5(x − 2) = 3x + 8.",9,"5x − 10 = 3x + 8; 2x = 18; x = 9.","Difficult","concept"],
-["The sum of three consecutive integers is 72. Find the middle integer.",24,"Let them be x−1, x, x+1. Their sum is 3x = 72, so x = 24.","Difficult","application"],
-["A mother is 3 times her child's age. Their ages add to 48 years. Find the child's age.",12,"Let child's age = x. Mother's age = 3x. 4x = 48, so x = 12 years.","Difficult","application"]
-]},
-{name:"Congruency: Congruent Triangles",group:"Class Test 2",q:[
-["If three corresponding sides of two triangles are equal, which congruence criterion applies?",2,"SSS stands for Side-Side-Side; all three corresponding sides are equal.","Easy","concept",["SAS","ASA","SSS","RHS"]],
-["If two sides and the included angle of one triangle equal those of another, the criterion is:",1,"SAS means two sides and the included angle are equal.","Easy","concept",["SSS","SAS","ASA","AAA"]],
-["Which criterion is used for right-angled triangles when hypotenuse and one side are equal?",3,"RHS means Right angle-Hypotenuse-Side.","Easy","concept",["SSS","ASA","SAS","RHS"]],
-["In congruent triangles, corresponding angles are:",1,"Corresponding parts of congruent triangles are equal (CPCT).","Easy","concept",["Unequal","Equal","Supplementary","Always acute"],["Unequal","Equal","Supplementary","Always acute"]],
-["If ΔABC ≅ ΔPQR, the vertex corresponding to B is:",1,"The order gives A↔P, B↔Q and C↔R.","Easy","concept",["P","Q","R","C"]],
-["Two triangles have sides 4 cm, 5 cm and 6 cm each. Are they congruent by SSS?",0,"All three corresponding sides match, so SSS proves congruence.","Moderate","concept",["Yes","No","Only if equilateral","Cannot be determined"],["Yes","No","Only if equilateral","Cannot be determined"]],
-["If ΔABC ≅ ΔDEF, and ∠B = 65°, then ∠E is:",1,"B corresponds to E, so corresponding angles are equal: 65°.","Moderate","concept",["25°","65°","90°","115°"]],
-["Two right triangles have equal hypotenuse and one corresponding side. Which criterion proves them congruent?",3,"For right triangles, equal hypotenuse and one side give RHS congruence.","Moderate","application",["AAA","ASA","SSS","RHS"]],
-["A student claims that equal three angles are enough to prove two triangles congruent. Is the claim correct?",1,"AAA proves similarity, not necessarily congruence; sizes may differ.","Difficult","application",["Yes, always","No, not necessarily","Only for right triangles","Only for isosceles triangles"]],
-["In congruent triangles, if a pair of corresponding sides are 8.5 cm and x cm, find x.",0,"Corresponding sides of congruent triangles are equal, so x = 8.5 cm.","Difficult","application",["8.5 cm","17 cm","4.25 cm","Cannot be found"]]
-]},
-{name:"Symmetry",group:"Term Exam",q:[
-["How many lines of symmetry does a square have?",2,"A square has 4 lines: two diagonals and two lines through midpoints of opposite sides.","Easy","concept",["1","2","4","8"]],
-["How many lines of symmetry does a non-square rectangle have?",1,"A rectangle has 2 lines of symmetry through the midpoints of opposite sides.","Easy","concept",["1","2","3","4"]],
-["A regular equilateral triangle has how many lines of symmetry?",2,"Each vertex-to-opposite-side midpoint line is a symmetry line; total 3.","Easy","concept",["1","2","3","6"]],
-["What is the order of rotational symmetry of a square?",2,"A square matches itself at 0°, 90°, 180° and 270°; order 4.","Easy","concept",["1","2","4","8"]],
-["A shape matches itself after a rotation of 180° only (before 360°). Its order is:",1,"There are two matching positions in one full turn: 0° and 180°.","Moderate","concept",["1","2","3","4"]],
-["How many lines of symmetry does a regular hexagon have?",5,"A regular hexagon has 6 symmetry axes: 3 through opposite vertices and 3 through opposite sides.","Moderate","concept",["3","4","5","6"]],
-["Which capital letter has vertical line symmetry?",0,"A is symmetric about a vertical line through its centre in standard block lettering.","Moderate","concept",["A","F","G","R"]],
-["A design repeats 5 times in one complete turn. What is its rotational symmetry order?",4,"The order is the number of times the figure matches itself in 360°: 5.","Moderate","application",["2","3","4","5"]],
-["What is the smallest angle of rotation for a regular pentagon?",1,"Smallest angle = 360° ÷ 5 = 72°.","Difficult","concept",["60°","72°","90°","108°"]],
-["A regular polygon has rotational symmetry of order 8. Find its smallest angle of rotation.",0,"360° ÷ 8 = 45°.","Difficult","application",["45°","40°","60°","90°"]]
-]},
-{name:"Inequalities",group:"Term Exam",q:[
-["Solve: x + 4 < 9.",1,"Subtract 4 from both sides: x < 5.","Easy","concept",["x > 5","x < 5","x ≤ 5","x ≥ 5"]],
-["Solve: 3x ≤ 18.",2,"Divide both sides by positive 3: x ≤ 6.","Easy","concept",["x < 6","x > 6","x ≤ 6","x ≥ 6"]],
-["Which symbol means 'at least'?",2,"At least includes the stated value and all greater values: ≥.","Easy","concept",["<",">","≥","≤"]],
-["If x is a whole number and x < 4, which is not in the solution set?",3,"Whole numbers less than 4 are 0, 1, 2 and 3; 4 is excluded.","Easy","concept",["0","2","3","4"]],
-["Solve: 2x − 5 > 7.",2,"Add 5: 2x > 12. Divide by 2: x > 6.","Moderate","concept",["x > 5","x < 6","x > 6","x ≥ 6"]],
-["For x ∈ N, solve 3x ≤ 12. Take N = {1,2,3,...}.",1,"x ≤ 4 and x is natural, so solution set is {1, 2, 3, 4}.","Moderate","concept",["{0,1,2,3,4}","{1,2,3,4}","{1,2,3,4,5}","{4,5,...}"]],
-["A lift can carry at most 500 kg. If each box weighs 25 kg, what is the greatest number of boxes it can carry?",2,"25n ≤ 500, so n ≤ 20. Greatest whole number is 20.","Moderate","application",["15","18","20","25"]],
-["Solve: −2x < 10.",1,"Divide by −2 and reverse the inequality sign: x > −5.","Difficult","concept",["x < −5","x > −5","x ≤ −5","x ≥ −5"]],
-["A student needs at least 35 marks to pass. She has 22 marks. How many more marks m are needed?",3,"22 + m ≥ 35, so m ≥ 13.","Difficult","application",["m > 13","m < 13","m ≤ 13","m ≥ 13"]],
-["For integer x, solve −3 ≤ x < 2. How many integer values are there?",2,"Integers are −3, −2, −1, 0, 1: five values.","Difficult","application",["3","4","5","6"]]
-]},
-{name:"Simple Interest",group:"Term Exam",q:[
-["Write the formula for simple interest.",0,"Simple Interest = (Principal × Rate × Time) ÷ 100.","Easy","concept",["SI = PRT/100","SI = P + R + T","SI = PT/R","SI = 100PRT"]],
-["Find SI on ₹1,000 at 5% per annum for 1 year.",1,"SI = 1000×5×1/100 = ₹50.","Easy","concept",["₹25","₹50","₹100","₹500"]],
-["What is the amount if principal is ₹800 and simple interest is ₹80?",2,"Amount = Principal + SI = 800 + 80 = ₹880.","Easy","concept",["₹720","₹800","₹880","₹960"]],
-["Find SI on ₹2,000 at 10% per annum for 2 years.",3,"SI = 2000×10×2/100 = ₹400.","Moderate","application",["₹200","₹300","₹350","₹400"]],
-["At 5% simple interest, what interest is earned on ₹4,000 in 3 years?",2,"SI = 4000×5×3/100 = ₹600.","Moderate","application",["₹400","₹500","₹600","₹700"]],
-["₹1,500 earns ₹180 simple interest in 2 years. Find the annual rate.",1,"R = (SI×100)/(P×T) = 180×100/(1500×2) = 6%.","Moderate","application",["5%","6%","8%","10%"]],
-["At 8% simple interest, in how many years will ₹2,000 earn ₹480?",2,"T = SI×100/(P×R) = 480×100/(2000×8) = 3 years.","Difficult","application",["2 years","2.5 years","3 years","4 years"]],
-["Find the principal if SI = ₹240, rate = 6% p.a. and time = 2 years.",1,"P = SI×100/(R×T) = 240×100/(6×2) = ₹2,000.","Difficult","application",["₹1,500","₹2,000","₹2,400","₹3,000"]],
-["A sum becomes ₹2,600 after 3 years at 10% simple interest. Find the principal.",2,"A = P(1 + RT/100) = 1.3P. Thus P = 2600/1.3 = ₹2,000.","Difficult","application",["₹1,800","₹1,900","₹2,000","₹2,300"]],
-["Find the amount on ₹3,500 at 4% p.a. simple interest for 2 years.",3,"SI = 3500×4×2/100 = ₹280. Amount = 3500 + 280 = ₹3,780.","Difficult","application",["₹3,600","₹3,700","₹3,750","₹3,780"]]
-]},
-{name:"Recognition of Solids",group:"Term Exam",q:[
-["How many faces does a cube have?",2,"A cube has 6 square faces.","Easy","concept",["4","5","6","8"]],
-["How many edges does a cuboid have?",2,"A cuboid has 12 edges.","Easy","concept",["8","10","12","14"]],
-["Which solid has one circular base and one curved surface ending at a vertex?",1,"A cone has one circular base and one vertex.","Easy","concept",["Cylinder","Cone","Sphere","Cube"]],
-["A sphere has how many vertices?",0,"A sphere has no flat faces, edges or vertices.","Easy","concept",["0","1","2","4"]],
-["How many vertices does a triangular prism have?",2,"A triangular prism has two triangular ends, each with 3 vertices: 6 total.","Moderate","concept",["3","5","6","9"]],
-["Which solid has two circular flat faces and one curved surface?",1,"A cylinder has two circular bases and one curved surface.","Moderate","concept",["Cone","Cylinder","Sphere","Pyramid"]],
-["A dice is shaped like which solid?",0,"A standard dice is a cube.","Easy","application",["Cube","Cuboid","Cylinder","Cone"]],
-["How many faces does a square-based pyramid have?",2,"It has one square base and four triangular side faces: 5 faces.","Moderate","concept",["3","4","5","6"]],
-["A net made of six equal squares folds to form a:",1,"Six equal square faces form a cube.","Difficult","application",["Cuboid only","Cube","Cylinder","Triangular prism"]],
-["Which solid has a curved surface but no edge or vertex?",3,"A sphere has one continuous curved surface and no edges or vertices.","Difficult","concept",["Cone","Cylinder","Cube","Sphere"]]
-]},
-{name:"Data Handling",group:"Term Exam",q:[
-["Find the mean of 2, 4 and 6.",1,"Mean = (2+4+6)/3 = 12/3 = 4.","Easy","concept",["3","4","5","6"]],
-["Find the mode of 3, 5, 5, 7, 8.",1,"5 occurs most frequently, so the mode is 5.","Easy","concept",["3","5","7","8"]],
-["Find the range of 4, 9, 2, 11, 6.",2,"Range = highest − lowest = 11 − 2 = 9.","Easy","concept",["7","8","9","11"]],
-["Find the median of 2, 5, 7, 9, 12.",2,"The middle value of the ordered five numbers is 7.","Easy","concept",["5","6","7","9"]],
-["The marks are 6, 8, 10 and 12. Find the mean.",1,"Mean = 36/4 = 9.","Moderate","application",["8","9","10","11"]],
-["A shop sold 12, 15, 9 and 14 notebooks over four days. Find the total sold.",2,"Total = 12 + 15 + 9 + 14 = 50 notebooks.","Moderate","application",["45","48","50","52"]],
-["In a pie chart, what angle represents one quarter of the data?",1,"One quarter of 360° is 90°.","Moderate","concept",["45°","90°","120°","180°"]],
-["The mean of five numbers is 12. Their total is:",2,"Sum = mean × number of values = 12 × 5 = 60.","Moderate","application",["17","50","60","72"]],
-["Find the median of 3, 8, 10, 12, 15, 18.",1,"For six values, median is average of 3rd and 4th: (10+12)/2 = 11.","Difficult","concept",["10","11","12","13"]],
-["A class has 20 students. 8 prefer cricket, 6 football and the rest badminton. How many prefer badminton?",2,"20 − 8 − 6 = 6 students.","Difficult","application",["4","5","6","8"]]
-]},
-{name:"Triangles",group:"Term Exam",q:[
-["The sum of the interior angles of a triangle is:",2,"The angle-sum property states that the three interior angles total 180°.","Easy","concept",["90°","120°","180°","360°"]],
-["A triangle with all three sides equal is called:",1,"An equilateral triangle has three equal sides.","Easy","concept",["Scalene","Equilateral","Isosceles","Right-angled"]],
-["A triangle with one angle equal to 90° is:",0,"A right-angled triangle has one right angle.","Easy","concept",["Right-angled","Acute-angled","Obtuse-angled","Equilateral"]],
-["Two angles of a triangle are 50° and 60°. Find the third angle.",1,"Third angle = 180° − 50° − 60° = 70°.","Easy","concept",["60°","70°","80°","90°"]],
-["An exterior angle of a triangle equals:",2,"It equals the sum of the two opposite interior angles.","Moderate","concept",["The adjacent interior angle","Half the triangle angle sum","Sum of two opposite interior angles","Always 90°"]],
-["An isosceles triangle has vertex angle 40°. Find each base angle.",2,"Base angles are equal. Each = (180°−40°)/2 = 70°.","Moderate","application",["40°","60°","70°","80°"]],
-["Can sides 3 cm, 4 cm and 8 cm form a triangle?",1,"No. The sum of the two shorter sides, 3+4=7, is less than 8.","Moderate","concept",["Yes","No","Only a right triangle","Only an equilateral triangle"]],
-["An exterior angle is 125°. One opposite interior angle is 55°. Find the other.",2,"Exterior angle = sum of opposite interior angles; other = 125°−55° = 70°.","Difficult","application",["55°","65°","70°","75°"]],
-["The sides of a triangle are 5 cm, 5 cm and 8 cm. What is its type?",1,"Two sides are equal, so it is an isosceles triangle.","Moderate","application",["Scalene","Isosceles","Equilateral","Right-angled"]],
-["Two angles of a triangle are in the ratio 2:3 and the third is 80°. Find the smaller angle.",1,"The first two total 100°. Five parts = 100°, so one part = 20°; smaller = 40°.","Difficult","application",["20°","40°","60°","80°"]]
-]},
-{name:"Profit, Loss and Discount",group:"Term Exam",q:[
-["Profit is calculated when:",0,"Profit occurs when selling price is greater than cost price.","Easy","concept",["SP > CP","SP < CP","SP = CP","Discount > CP"]],
-["A toy bought for ₹80 is sold for ₹100. Find the profit.",1,"Profit = SP − CP = 100 − 80 = ₹20.","Easy","application",["₹10","₹20","₹30","₹40"]],
-["An article bought for ₹500 is sold for ₹450. Find the loss.",2,"Loss = CP − SP = 500 − 450 = ₹50.","Easy","application",["₹25","₹40","₹50","₹60"]],
-["Find the discount on a ₹800 item marked at 10% discount.",1,"Discount = 10% of 800 = ₹80.","Easy","application",["₹40","₹80","₹100","₹120"]],
-["An item costs ₹600 and is sold for ₹690. Find profit percent.",2,"Profit = 90. Profit% = 90/600 × 100 = 15%.","Moderate","application",["10%","12%","15%","18%"]],
-["A bag marked ₹1,200 is discounted by 15%. Find its selling price.",1,"Discount = ₹180. Selling price = 1200 − 180 = ₹1,020.","Moderate","application",["₹1,000","₹1,020","₹1,050","₹1,080"]],
-["A cycle is sold for ₹1,080 at a loss of 10%. Find its cost price.",2,"SP is 90% of CP. CP = 1080 × 100/90 = ₹1,200.","Difficult","application",["₹1,100","₹1,180","₹1,200","₹1,250"]],
-["A shopkeeper buys 20 pens at ₹8 each and sells all at ₹10 each. Find total profit.",2,"CP = 20×8 = ₹160; SP = 20×10 = ₹200; profit = ₹40.","Moderate","application",["₹20","₹30","₹40","₹50"]],
-["After a discount of 20%, an item sells for ₹960. Find its marked price.",2,"₹960 is 80% of MP. MP = 960×100/80 = ₹1,200.","Difficult","application",["₹1,000","₹1,100","₹1,200","₹1,250"]],
-["A trader marks an article at ₹2,000 and gives 10% discount. If CP is ₹1,500, find profit percent.",1,"SP = 1800. Profit = 300. Profit% = 300/1500×100 = 20%.","Difficult","application",["10%","20%","25%","30%"]]
-]},
-{name:"Constructions",group:"Term Exam",q:[
-["Which instrument is used to draw a circle with a given radius?",1,"A compass is used to draw circles and arcs.","Easy","concept",["Protractor","Compass","Set square","Divider"]],
-["Which instrument is used to measure an angle?",2,"A protractor measures angles in degrees.","Easy","concept",["Ruler","Compass","Protractor","Divider"]],
-["To construct the perpendicular bisector of a segment, arcs are drawn from:",1,"Use the same compass radius, greater than half the segment, from both endpoints.","Moderate","concept",["Only its midpoint","Both endpoints with equal radius","One endpoint only","Any two points"]],
-["An angle of 90° is called:",0,"A 90° angle is a right angle.","Easy","concept",["Right angle","Acute angle","Obtuse angle","Straight angle"]],
-["Which pair of instruments is most commonly used for geometric constructions?",2,"A ruler and compass are the standard construction instruments.","Easy","concept",["Protractor and calculator","Divider and calculator","Ruler and compass","Set square and calculator"]],
-["To construct an angle of 60°, a standard compass construction uses:",1,"An equilateral-triangle construction creates 60° angles.","Moderate","concept",["A square","Equal-radius arcs","A rectangle","A measuring tape"]],
-["A line segment is 8 cm long. Where is its midpoint?",2,"The midpoint divides the segment into two equal 4 cm parts.","Easy","application",["2 cm from one end","3 cm from one end","4 cm from either end","6 cm from one end"]],
-["What is the first step to construct a perpendicular bisector of AB?",0,"Draw arcs of equal radius from A and B, using a radius more than half AB.","Difficult","concept",["Draw equal-radius arcs from A and B","Measure AB with a protractor","Draw a parallel line","Draw a circle at the midpoint"]],
-["Can a triangle be constructed with sides 2 cm, 3 cm and 6 cm?",1,"No; 2 + 3 is less than 6, so the triangle inequality is violated.","Difficult","application",["Yes","No","Only right-angled","Only isosceles"]],
-["For constructing a triangle with sides 5 cm, 6 cm and 7 cm, which condition is essential?",2,"The sum of any two sides must be greater than the third; 5+6>7, etc.","Difficult","concept",["One side must be 1 cm","All angles must be equal","Sum of any two sides exceeds the third","One angle must be 90°"]]
-]},
-{name:"Pythagoras Theorem",group:"Term Exam",q:[
-["Pythagoras theorem applies to:",1,"It applies to right-angled triangles.","Easy","concept",["All triangles","Right-angled triangles","Equilateral triangles only","Isosceles triangles only"]],
-["In a right triangle, the hypotenuse is:",2,"It is the side opposite the right angle and is the longest side.","Easy","concept",["The shortest side","Any side","The side opposite the right angle","A side next to the right angle"]],
-["Find the hypotenuse when the other sides are 3 cm and 4 cm.",1,"c² = 3²+4² = 9+16 = 25, so c = 5 cm.","Easy","concept",["4 cm","5 cm","6 cm","7 cm"]],
-["A ladder reaches 12 m up a wall. Its foot is 5 m from the wall. Find ladder length.",2,"Ladder² = 12²+5² = 144+25 = 169; length = 13 m.","Moderate","application",["12 m","13 m","15 m","17 m"]],
-["Find the missing shorter side if hypotenuse is 13 cm and other side is 5 cm.",1,"Missing side² = 13²−5² = 169−25 = 144; side = 12 cm.","Moderate","concept",["8 cm","12 cm","14 cm","18 cm"]],
-["A rectangle is 8 cm long and 6 cm wide. Find its diagonal.",2,"Diagonal² = 8²+6² = 64+36 = 100; diagonal = 10 cm.","Moderate","application",["9 cm","9.5 cm","10 cm","12 cm"]],
-["Which set can be the sides of a right-angled triangle?",1,"5² + 12² = 25+144 = 169 = 13².","Moderate","concept",["4, 5, 6","5, 12, 13","6, 7, 8","3, 4, 6"]],
-["A square has side 10 cm. Find its diagonal.",2,"Diagonal² = 10²+10² = 200; diagonal = 10√2 cm.","Difficult","application",["10 cm","10√3 cm","10√2 cm","20 cm"]],
-["A 15 m pole casts a shadow 8 m long. Find the distance from the top of the pole to the shadow tip.",2,"Distance² = 15²+8² = 225+64 = 289; distance = 17 m.","Difficult","application",["15 m","16 m","17 m","18 m"]],
-["A right triangle has hypotenuse 25 cm and one side 7 cm. Find the other side.",1,"Other side² = 25²−7² = 625−49 = 576; side = 24 cm.","Difficult","concept",["18 cm","24 cm","26 cm","32 cm"]]
-]},
-{name:"Probability",group:"Term Exam",q:[
-["Probability of an impossible event is:",0,"An impossible event has probability 0.","Easy","concept",["0","1/2","1","2"]],
-["Probability of a certain event is:",2,"A certain event has probability 1.","Easy","concept",["0","1/2","1","2"]],
-["A fair coin is tossed. Probability of getting heads is:",1,"There are two equally likely outcomes; one is heads, so probability = 1/2.","Easy","concept",["0","1/2","1","2"]],
-["A fair die is rolled. Probability of getting 6 is:",1,"One favourable outcome out of six equally likely outcomes gives 1/6.","Easy","concept",["1/2","1/6","1/3","5/6"]],
-["A bag has 3 red and 2 blue balls. Probability of drawing a red ball is:",2,"Favourable outcomes = 3; total = 5; probability = 3/5.","Moderate","application",["2/5","1/2","3/5","3/2"]],
-["A die is rolled. Probability of getting an even number is:",1,"Even outcomes are 2, 4, 6: 3/6 = 1/2.","Moderate","application",["1/6","1/2","2/3","5/6"]],
-["A box contains 4 green, 5 yellow and 1 black marble. Probability of not picking yellow is:",1,"Not yellow = 4+1 = 5 out of 10, so probability = 1/2.","Moderate","application",["1/5","1/2","2/5","3/5"]],
-["A card is chosen from cards numbered 1 to 10. Probability of choosing a number greater than 7 is:",1,"Favourable numbers are 8, 9, 10: 3/10.","Difficult","application",["1/10","3/10","7/10","8/10"]],
-["A die is rolled. Probability of getting a prime number is:",2,"Prime outcomes are 2, 3, 5: 3/6 = 1/2.","Difficult","concept",["1/6","1/3","1/2","2/3"]],
-["A bag has 6 white and 4 black beads. One bead is drawn. Probability it is black is:",1,"There are 4 black out of 10 beads: 4/10 = 2/5.","Difficult","application",["1/5","2/5","3/5","4/5"]]
-]},
-{name:"Mensuration",group:"Term Exam",q:[
-["Find the perimeter of a rectangle of length 8 cm and breadth 5 cm.",2,"Perimeter = 2(l+b) = 2(8+5) = 26 cm.","Easy","concept",["13 cm","16 cm","26 cm","40 cm"]],
-["Find the area of a square of side 7 cm.",1,"Area = side² = 7×7 = 49 cm².","Easy","concept",["14 cm²","49 cm²","28 cm²","56 cm²"]],
-["Find the area of a rectangle 12 cm long and 4 cm wide.",2,"Area = length × breadth = 12×4 = 48 cm².","Easy","concept",["16 cm²","32 cm²","48 cm²","64 cm²"]],
-["A rectangular garden is 15 m long and 10 m wide. Find the fencing needed around it.",2,"Fencing = perimeter = 2(15+10) = 50 m.","Moderate","application",["25 m","40 m","50 m","150 m"]],
-["Find the area of a triangle with base 10 cm and height 8 cm.",1,"Area = 1/2 × base × height = 1/2×10×8 = 40 cm².","Moderate","concept",["20 cm²","40 cm²","80 cm²","100 cm²"]],
-["A floor is 6 m by 4 m. How many 1 m² tiles are needed to cover it?",2,"Floor area = 6×4 = 24 m², so 24 tiles are needed.","Moderate","application",["10","20","24","28"]],
-["Find the circumference of a circle of radius 7 cm. Use π = 22/7.",2,"Circumference = 2πr = 2×22/7×7 = 44 cm.","Moderate","concept",["22 cm","38 cm","44 cm","49 cm"]],
-["A square park has perimeter 100 m. Find its area.",1,"Side = 100/4 = 25 m. Area = 25² = 625 m².","Difficult","application",["400 m²","625 m²","1,000 m²","2,500 m²"]],
-["A rectangular sheet is 20 cm × 12 cm. A 2 cm-wide strip is cut along its full length from one side. Find remaining area.",2,"Removed area = 20×2 = 40 cm². Original = 240 cm². Remaining = 200 cm².","Difficult","application",["160 cm²","180 cm²","200 cm²","220 cm²"]],
-["A path 1 m wide runs inside a 10 m × 8 m rectangular garden along all four sides. Find the area left for grass.",1,"Inner dimensions = 8 m × 6 m. Grass area = 48 m².","Difficult","application",["40 m²","48 m²","56 m²","60 m²"]]
-]}
-];
-
-
-// Add 40 fresh, original practice questions to every chapter (50 per chapter).
-function addExtraQuestions(){
-  const add=(i, rows)=>chapters[i].q.push(...rows);
-  const levels=n=>n<6?"Easy":n<26?"Moderate":"Difficult";
-  const row=(q,a,e,n,kind="concept")=>[q,a,e,levels(n),kind];
-
-  // 0. Simple Linear Equation
-  {let r=[]; for(let n=0;n<40;n++){let a=2+n%7,b=3+(n*3)%13,x=4+(n*5)%17,c=a*x+b;
-    if(n%4===0){r.push(row(`Solve: ${a}x + ${b} = ${c}.`,x,`Subtract ${b}: ${a}x = ${a*x}. Divide by ${a}: x = ${x}.`,n));}
-    else if(n%4===1){let d=2+n%5,k=3+(n*2)%9;r.push(row(`Solve: (x + ${b})/${d} = ${k}.`,d*k-b,`Multiply by ${d}: x + ${b} = ${d*k}; subtract ${b}.`,n));}
-    else if(n%4===2){let t=2+n%6, z=5+(n*3)%14, rhs=t*z-2;r.push(row(`Solve: ${t}x − 2 = ${rhs}.`,z,`Add 2 and divide by ${t}: x = ${z}.`,n));}
-    else {let x2=8+n%19, addn=7+(n*2)%15;r.push(row(`A number decreased by ${addn} is ${x2-addn}. Find the number.`,x2,`Let the number be x. x − ${addn} = ${x2-addn}, so x = ${x2}.`,n,"application"));}
-  } add(0,r);}
-
-  // 1. Congruency
-  {let r=[];const sets=[["Which criterion uses three corresponding equal sides?","SSS",["SAS","SSS","ASA","RHS"],1],["Which criterion uses two sides and the included angle?","SAS",["SSS","ASA","SAS","AAA"],2],["Which criterion applies to right triangles using hypotenuse and one side?","RHS",["AAA","SSS","ASA","RHS"],3],["If two triangles are congruent, their corresponding sides are:","Equal",["Parallel","Equal","Double","Unequal"],1]];
-   for(let n=0;n<40;n++){let s=sets[n%4];r.push([s[0],s[3]===1?1:s[3]===2?2:3,s[1]+" is the applicable congruence criterion/property.",levels(n),"concept",s[2]]);}
-   add(1,r);}
-
-  // 2. Symmetry
-  {let r=[];for(let n=0;n<40;n++){let type=n%5,ans,q,e;
-    if(type===0){ans= n%2===0?4:2;q=`How many lines of symmetry does a ${n%2===0?"square":"rectangle (not a square)"} have?`;e=`A square has 4 lines; a non-square rectangle has 2.`;}
-    else if(type===1){ans= n%2===0?3:6;q=`What is the order of rotational symmetry of a regular ${n%2===0?"triangle":"hexagon"}?`;e=`A regular polygon's rotational symmetry order equals its number of sides.`;}
-    else if(type===2){ans= n%2===0?5:8;q=`How many lines of symmetry does a regular ${n%2===0?"pentagon":"octagon"} have?`;e=`A regular polygon has as many symmetry lines as sides.`;}
-    else if(type===3){ans=2;q="How many lines of symmetry does a standard capital letter H have (in block form)?";e="The letter H has one vertical and one horizontal line of symmetry.";}
-    else {ans=1;q="A figure that matches itself after a half-turn has rotational symmetry of at least what order?";e="A half-turn is 180°, so the order is 360°/180° = 2.";ans=2;}
-    r.push(row(q,ans,e,n));} add(2,r);}
-
-  // 3. Inequalities
-  {let r=[];for(let n=0;n<40;n++){let a=2+n%6,b=3+(n*2)%12,x=4+(n*3)%15;
-    if(n%2===0){let rhs=a*x-b+a;r.push(row(`Solve: ${a}x − ${b} < ${rhs}. Find the greatest integer value of x.`,x,`${a}x < ${rhs+b} = ${a*(x+1)}; hence x < ${x+1}. The greatest integer is ${x}.`,n));}
-    else {let rhs=a*(x-1)+b;r.push(row(`Solve: ${a}x + ${b} ≥ ${rhs}. Find the least integer value of x.`,x-1,`${a}x ≥ ${rhs-b} = ${a*(x-1)}; hence x ≥ ${x-1}. The least integer is ${x-1}.`,n));}
-  } add(3,r);}
-
-  // 4. Simple Interest
-  {let r=[];for(let n=0;n<40;n++){let p=500+100*(n%10),rate=4+(n%7),time=1+(n%5),si=p*rate*time/100;
-    if(n%3===0)r.push(row(`Find simple interest on ₹${p} at ${rate}% p.a. for ${time} year(s).`,si,`SI = P×R×T/100 = ${p}×${rate}×${time}/100 = ₹${si}.`,n,"application"));
-    else if(n%3===1)r.push(row(`Find the amount on ₹${p} at ${rate}% p.a. for ${time} year(s), simple interest.`,p+si,`SI = ₹${si}; Amount = Principal + SI = ₹${p+si}.`,n));
-    else r.push(row(`₹${p} earns ₹${si} simple interest in ${time} year(s). Find the rate per annum.`,rate,`Rate = SI×100/(P×T) = ${si}×100/(${p}×${time}) = ${rate}%.`,n));
-  } add(4,r);}
-
-  // 5. Recognition of Solids
-  {let r=[];const items=[["cube",6],["cuboid",6],["cylinder",3],["cone",2],["sphere",1]];
-   for(let n=0;n<40;n++){let [solid,faces]=items[n%5];let q=`How many ${solid==="sphere"?"curved surfaces/faces": "faces or surfaces (including curved surfaces)"} does a ${solid} have?`;let a=faces;
-    let opts=[String(a),String(a+1),String(Math.max(1,a-1)),String(a+2)];
-    r.push([q,0,`A ${solid} has ${faces} ${solid==="sphere"?"curved surface":"faces/surfaces"}.`,levels(n),"concept",opts]);
-  } add(5,r);}
-
-  // 6. Data Handling
-  {let r=[];for(let n=0;n<40;n++){let a=4+n%8,b=7+(n*2)%9,c=5+(n*3)%10,d=8+(n*4)%7,vals=[a,b,c,d];
-    if(n%4===0){let ans=vals.reduce((x,y)=>x+y,0);r.push(row(`Find the mean of ${vals.join(", ")}.`,ans/4,`Mean = (${vals.join("+")})/4 = ${ans/4}.`,n));}
-    else if(n%4===1){let sorted=[...vals].sort((x,y)=>x-y),ans=(sorted[1]+sorted[2])/2;r.push(row(`Find the median of ${vals.join(", ")}.`,ans,`Arrange in order: ${sorted.join(", ")}. Median = (${sorted[1]}+${sorted[2]})/2 = ${ans}.`,n));}
-    else if(n%4===2){let ans=Math.max(...vals);r.push(row(`Find the range of ${vals.join(", ")}.`,ans-Math.min(...vals),`Range = highest − lowest = ${ans} − ${Math.min(...vals)}.`,n));}
-    else {let ans=vals.reduce((x,y)=>x+y,0);r.push(row(`Four students scored ${vals.join(", ")} marks. Find their total marks.`,ans,`Total = ${vals.join(" + ")} = ${ans}.`,n,"application"));}
-  } add(6,r);}
-
-  // 7. Triangles
-  {let r=[];for(let n=0;n<40;n++){let a=35+n%30,b=45+(n*2)%25,c=180-a-b;if(c>0){r.push(row(`Two angles of a triangle are ${a}° and ${b}°. Find the third angle.`,c,`Angle sum = 180°. Third angle = 180° − ${a}° − ${b}° = ${c}°.`,n));}else{let x=4+n%10;r.push(row(`An isosceles triangle has vertex angle ${40+n%40}°. Find each base angle.`,(180-(40+n%40))/2,`Base angles are equal: (180° − vertex angle)/2.`,n));}}
-  add(7,r);}
-
-  // 8. Profit, Loss and Discount
-  {let r=[];for(let n=0;n<40;n++){let cp=100+25*(n%12),pct=5+5*(n%8);
-    if(n%3===0){let sp=cp*(100+pct)/100;r.push(row(`An article bought for ₹${cp} is sold at ${pct}% profit. Find the selling price.`,sp,`Profit = ${pct}% of ${cp} = ₹${sp-cp}; SP = ₹${sp}.`,n,"application"));}
-    else if(n%3===1){let sp=cp*(100-pct)/100;r.push(row(`An article bought for ₹${cp} is sold at ${pct}% loss. Find the selling price.`,sp,`Loss = ${pct}% of ${cp} = ₹${cp-sp}; SP = ₹${sp}.`,n));}
-    else {let mp=cp*2,disc=pct,sp=mp*(100-disc)/100;r.push(row(`Marked price is ₹${mp}. A discount of ${disc}% is given. Find selling price.`,sp,`Discount = ₹${mp*disc/100}; SP = ₹${sp}.`,n));}
-  } add(8,r);}
-
-  // 9. Constructions
-  {let r=[];const qs=[["Which instrument is used to draw an arc while constructing an angle?","Compass",["Ruler","Compass","Protractor","Set square"],1],["Which instrument is used to measure an angle?","Protractor",["Compass","Divider","Protractor","Scale"],2],["A perpendicular bisector meets a line segment at what angle?","90°",["45°","60°","90°","180°"],2],["How many equal parts does an angle bisector make?","2",["2","3","4","5"],0]];
-   for(let n=0;n<40;n++){let s=qs[n%4];r.push([s[0],s[3],s[1]+" is the correct construction fact.",levels(n),"concept",s[2]]);}
-   add(9,r);}
-
-  // 10. Pythagoras Theorem
-  {let r=[];const triples=[[3,4,5],[5,12,13],[6,8,10],[8,15,17],[7,24,25],[9,12,15],[9,40,41],[12,16,20],[20,21,29],[10,24,26]];
-   for(let n=0;n<40;n++){let t=triples[n%10],scale=1+Math.floor(n/10),a=t[0]*scale,b=t[1]*scale,c=t[2]*scale;
-    if(n%2===0)r.push(row(`A right triangle has perpendicular sides ${a} cm and ${b} cm. Find its hypotenuse.`,c,`By Pythagoras: h² = ${a}² + ${b}² = ${c*c}; h = ${c} cm.`,n,"application"));
-    else r.push(row(`The hypotenuse is ${c} cm and one side is ${a} cm. Find the other side.`,b,`Other side² = ${c}² − ${a}² = ${b*b}; other side = ${b} cm.`,n));
-  } add(10,r);}
-
-  // 11. Probability
-  {let r=[];for(let n=0;n<40;n++){let total=6+n%9,fav=1+(n*3)%total;
-    if(n%2===0)r.push(row(`A bag has ${fav} red balls and ${total-fav} blue balls. Find P(red).`,fav/total,`Probability = favourable outcomes / total outcomes = ${fav}/${total}.`,n,"application"));
-    else {let faces=6,even=3;r.push(row("A fair die is rolled. Find the probability of getting an even number.",0.5,"Even outcomes are 2, 4, 6: probability = 3/6 = 1/2.",n));}
-  } add(11,r);}
-
-  // 12. Mensuration
-  {let r=[];for(let n=0;n<40;n++){let l=5+n%12,b=3+(n*2)%9,h=2+(n*3)%8;
-    if(n%4===0){r.push(row(`Find the area of a rectangle of length ${l} cm and breadth ${b} cm.`,l*b,`Area = length × breadth = ${l}×${b} = ${l*b} cm².`,n));}
-    else if(n%4===1){let s=3+n%12;r.push(row(`Find the perimeter of a square of side ${s} cm.`,4*s,`Perimeter = 4×side = 4×${s} = ${4*s} cm.`,n));}
-    else if(n%4===2){r.push(row(`Find the volume of a cuboid of dimensions ${l} cm, ${b} cm and ${h} cm.`,l*b*h,`Volume = l×b×h = ${l}×${b}×${h} = ${l*b*h} cm³.`,n));}
-    else {let s=2+n%10;r.push(row(`Find the area of a square of side ${s} cm.`,s*s,`Area = side² = ${s}×${s} = ${s*s} cm².`,n));}
-  } add(12,r);}
+<!-- saved from url=(0082)https://github.com/drnitishaaggarwal-cloud/online-quiz-website-class-7/upload/main -->
+<html lang="en" data-color-mode="auto" data-light-theme="light" data-dark-theme="dark" data-a11y-animated-images="system" data-a11y-link-underlines="true" data-css-features="site_disable_smooth_scrolling" data-turbo-loaded="" class="js-focus-visible" data-js-focus-visible=""><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><style type="text/css">.turbo-progress-bar {
+  position: fixed;
+  display: block;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: #0076ff;
+  z-index: 2147483647;
+  transition:
+    width 300ms ease-out,
+    opacity 150ms 150ms ease-in;
+  transform: translate3d(0, 0, 0);
 }
-addExtraQuestions();
-// Keep a balanced difficulty mix in every chapter: 10 Easy, 20 Moderate, 20 Difficult.
-chapters.forEach(ch=>ch.q.forEach((q,i)=>{q[3]=i<10?"Easy":i<30?"Moderate":"Difficult";}));
+</style><style>
+:root {
+  --fontStack-monospace: "Monaspace Neon", ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace !important;
+}
+</style>
 
-// Normalize multiple-choice entries whose explicit option list is supplied.
-chapters.forEach(ch => ch.q.forEach(q => {
- if (Array.isArray(q[5])) {
-   const correctIndex = q[1];
-   const explanation = q[2];
-   const level = q[3], kind = q[4], opts = q[5];
-   q[1] = opts[correctIndex]; q[2] = explanation; q[3] = level; q[4] = kind; q[5] = opts; q[6] = correctIndex;
- }
-}));
 
-const customOptions = (q) => q[5] || null;
-let activeChapter=0, list=[], idx=0, score=0, locked=false;
-const $=id=>document.getElementById(id);
-function buildHome(){
- const host=$("chapters");host.innerHTML="";
- chapters.forEach((c,i)=>{const b=document.createElement("button");b.className="chapter";b.innerHTML=`<b>${i+1}. ${c.name}</b><small>${c.group} • ${c.q.length} practice questions</small>`;b.onclick=()=>startChapter(i);host.appendChild(b)});
-}
-function startChapter(i){
- activeChapter=i;const level=$("level").value,mode=$("mode").value;
- list=chapters[i].q.filter(q=>(level==="all"||q[3]===level)&&(mode==="all"||q[4]===mode));
- idx=0;score=0;$("home").classList.add("hide");$("result").classList.add("hide");$("quiz").classList.remove("hide");
- if(!list.length){alert("No questions match these filters. Please choose another difficulty or practice type.");backHome();return}
- render();
-}
-function optionsFor(q){
- if(q[5])return q[5].map((s,i)=>({label:s,value:i}));
- const ans=Number(q[1]);let vals=Number.isInteger(ans)?[ans,ans+2,ans-2,ans+5]:[ans,ans+1,ans-1,ans+2];
- vals=[...new Set(vals)];while(vals.length<4)vals.push(vals[vals.length-1]+1);
- return vals.slice(0,4).map(v=>({label:String(v),value:v})).sort((a,b)=>((Math.abs(Number(a.value)*17+13)%23)-(Math.abs(Number(b.value)*17+13)%23)));
-}
-function render(){
- locked=false;const q=list[idx];$("qcount").textContent=`Question ${idx+1} of ${list.length}`;$("difficulty").textContent=q[3];$("scoretag").textContent=`Score: ${score}`;$("bar").style.width=(idx/list.length*100)+"%";$("qtype").textContent=q[4]==="application"?"APPLICATION / WORD PROBLEM":"CONCEPT / EXERCISE PRACTICE";$("question").textContent=q[0];$("feedback").style.display="none";$("next").disabled=true;$("next").textContent=idx===list.length-1?"See Results":"Next Question";$("options").innerHTML="";
- const opts=optionsFor(q);
- opts.forEach((o,j)=>{const b=document.createElement("button");b.className="option";b.textContent=`${"ABCD"[j]}. ${o.label}`;b.dataset.correct=(q[5]?j===q[6]:String(o.value)===String(q[1]))?"yes":"no";b.onclick=()=>choose(b,q);$("options").appendChild(b)});
-}
-function choose(btn,q){
- if(locked)return;locked=true;const correct=btn.dataset.correct==="yes";if(correct)score++;
- [...$("options").children].forEach(b=>{if(b.dataset.correct==="yes")b.classList.add("correct");b.disabled=true});if(!correct)btn.classList.add("wrong");
- const answer=q[5]?q[5][q[6]]:q[1];
- $("feedback").style.display="block";$("feedback").innerHTML=`<b>${correct?"Correct!":"Review this one."}</b> Answer: <b>${answer}</b><br>${q[2]}`;
- $("scoretag").textContent=`Score: ${score}`;$("next").disabled=false;
-}
-function finish(){
- $("quiz").classList.add("hide");$("result").classList.remove("hide");$("finalscore").textContent=`${score} / ${list.length}`;const pct=score/list.length;
- $("remark").textContent=pct>=.8?"Excellent work! You have a strong understanding of this chapter.":pct>=.5?"Good effort. Review the explanations and practise again.":"Keep practising. Read each explanation carefully and try again.";
-}
-function backHome(){$("quiz").classList.add("hide");$("result").classList.add("hide");$("home").classList.remove("hide")}
-$("next").onclick=()=>{if(idx<list.length-1){idx++;render()}else finish()};
-$("quit").onclick=backHome;$("back").onclick=backHome;$("retry").onclick=()=>startChapter(activeChapter);
-buildHome();
-</script></body></html>
+
+
+  
+    
+  <link rel="dns-prefetch" href="https://github.githubassets.com/">
+  <link rel="dns-prefetch" href="https://avatars.githubusercontent.com/">
+  <link rel="dns-prefetch" href="https://github-cloud.s3.amazonaws.com/">
+  <link rel="dns-prefetch" href="https://user-images.githubusercontent.com/">
+  <link rel="preconnect" href="https://github.githubassets.com/" crossorigin="">
+  <link rel="preconnect" href="https://avatars.githubusercontent.com/">
+
+<script type="importmap">{"imports":{"react":"https://github.githubassets.com/assets/react-fa5e2e82e6e0ecc0.js","react-dom":"https://github.githubassets.com/assets/react-dom-c7f52540bb6b77ed.js","react-dom/client":"https://github.githubassets.com/assets/react-dom-client-35b308126995de85.js","react-is":"https://github.githubassets.com/assets/react-is-e0b593954b4706d8.js","react-reconciler":"https://github.githubassets.com/assets/react-reconciler-8e99e505c4429605.js","react/compiler-runtime":"https://github.githubassets.com/assets/react-compiler-runtime-4610bd6d3de9c049.js","react/jsx-dev-runtime":"https://github.githubassets.com/assets/react-jsx-dev-runtime-ea55d68667d559e5.js","react/jsx-runtime":"https://github.githubassets.com/assets/react-jsx-runtime-4915cb0f5b3aff04.js","scheduler":"https://github.githubassets.com/assets/scheduler-58b860b049ca307c.js"}}</script>
+<meta name="react-profiling" content="0" data-turbo-transient="true">
+<meta name="react-import-map" content="react,react-dom,react-dom/client,react-dom/profiling,react-is,react-reconciler,react/compiler-runtime,react/jsx-dev-runtime,react/jsx-runtime,scheduler@d5750093facf" data-turbo-track="reload">
+<link crossorigin="anonymous" rel="modulepreload" href="https://github.githubassets.com/assets/react-fa5e2e82e6e0ecc0.js">
+<link crossorigin="anonymous" rel="modulepreload" href="https://github.githubassets.com/assets/react-compiler-runtime-4610bd6d3de9c049.js">
+<link crossorigin="anonymous" rel="modulepreload" href="https://github.githubassets.com/assets/scheduler-58b860b049ca307c.js">
+<link crossorigin="anonymous" rel="modulepreload" href="https://github.githubassets.com/assets/react-dom-c7f52540bb6b77ed.js">
+<link crossorigin="anonymous" rel="modulepreload" href="https://github.githubassets.com/assets/react-dom-client-35b308126995de85.js">
+<link crossorigin="anonymous" rel="modulepreload" href="https://github.githubassets.com/assets/react-is-e0b593954b4706d8.js">
+<link crossorigin="anonymous" rel="modulepreload" href="https://github.githubassets.com/assets/react-jsx-runtime-4915cb0f5b3aff04.js">
+<link crossorigin="anonymous" rel="modulepreload" href="https://github.githubassets.com/assets/react-reconciler-8e99e505c4429605.js">
+
+  
+
+  <link crossorigin="anonymous" media="all" rel="stylesheet" href="./Class_7_ICSE_Maths_Quiz_Linear_Equations_50_files/light-0011b1fed09cb294.css"><link crossorigin="anonymous" media="all" rel="stylesheet" href="./Class_7_ICSE_Maths_Quiz_Linear_Equations_50_files/dark-37b5e41810563d82.css"><link data-color-theme="light_high_contrast" crossorigin="anonymous" media="all" rel="stylesheet" data-href="https://github.githubassets.com/assets/light_high_contrast-267ab2e12d3b7ade.css"><link data-color-theme="light_colorblind" crossorigin="anonymous" media="all" rel="stylesheet" data-href="https://github.githubassets.com/assets/light_colorblind-099f205806bcc4a8.css"><link data-color-theme="light_colorblind_high_contrast" crossorigin="anonymous" media="all" rel="stylesheet" data-href="https://github.githubassets.com/assets/light_colorblind_high_contrast-0676b30822f1adb0.css"><link data-color-theme="light_tritanopia" crossorigin="anonymous" media="all" rel="stylesheet" data-href="https://github.githubassets.com/assets/light_tritanopia-5ed4733e4ee6a8ba.css"><link data-color-theme="light_tritanopia_high_contrast" crossorigin="anonymous" media="all" rel="stylesheet" data-href="https://github.githubassets.com/assets/light_tritanopia_high_contrast-c7ac71fdcac9204f.css"><link data-color-theme="dark_high_contrast" crossorigin="anonymous" media="all" rel="stylesheet" data-href="https://github.githubassets.com/assets/dark_high_contrast-d69295870cb5f203.css"><link data-color-theme="dark_colorblind" crossorigin="anonymous" media="all" rel="stylesheet" data-href="https://github.githubassets.com/assets/dark_colorblind-6cec1cef27f80205.css"><link data-color-theme="dark_colorblind_high_contrast" crossorigin="anonymous" media="all" rel="stylesheet" data-href="https://github.githubassets.com/assets/dark_colorblind_high_contrast-98af04953887e6b1.css"><link data-color-theme="dark_tritanopia" crossorigin="anonymous" media="all" rel="stylesheet" data-href="https://github.githubassets.com/assets/dark_tritanopia-1bdae783a6e7f314.css"><link data-color-theme="dark_tritanopia_high_contrast" crossorigin="anonymous" media="all" rel="stylesheet" data-href="https://github.githubassets.com/assets/dark_tritanopia_high_contrast-cc7a55015ac3ac9e.css"><link data-color-theme="dark_dimmed" crossorigin="anonymous" media="all" rel="stylesheet" data-href="https://github.githubassets.com/assets/dark_dimmed-c1d783f33c1db2a8.css"><link data-color-theme="dark_dimmed_high_contrast" crossorigin="anonymous" media="all" rel="stylesheet" data-href="https://github.githubassets.com/assets/dark_dimmed_high_contrast-6717e1e8beb457ad.css">
+
+  <style type="text/css">
+    :root {
+      --tab-size-preference: 4;
+    }
+
+    pre, code {
+      tab-size: var(--tab-size-preference);
+    }
+  </style>
+
+    <link crossorigin="anonymous" media="all" rel="stylesheet" href="./Class_7_ICSE_Maths_Quiz_Linear_Equations_50_files/primer-primitives-bd624c4ec96b42e9.css">
+    <link crossorigin="anonymous" media="all" rel="stylesheet" href="./Class_7_ICSE_Maths_Quiz_Linear_Equations_50_files/primer-tailwind-compatible-b1398b1d0cf9d7d6.css">
+    <link crossorigin="anonymous" media="all" rel="stylesheet" href="./Class_7_ICSE_Maths_Quiz_Linear_Equations_50_files/global-159fb17d033cf67d.css">
+    <link crossorigin="anonymous" media="all" rel="stylesheet" href="./Class_7_ICSE_Maths_Quiz_Linear_Equations_50_files/github-d4a7053a1b3b1731.css">
+    <link crossorigin="anonymous" media="all" rel="stylesheet" href="./Class_7_ICSE_Maths_Quiz_Linear_Equations_50_files/tailwind-82b2c0895edef757.css">
+  <link crossorigin="anonymous" media="all" rel="stylesheet" href="./Class_7_ICSE_Maths_Quiz_Linear_Equations_50_files/repository-97bab336048c27cf.css">
+<link crossorigin="anonymous" media="all" rel="stylesheet" href="./Class_7_ICSE_Maths_Quiz_Linear_Equations_50_files/code-c001ff1d5956e7b2.css">
+
+  
+
+  <script type="application/json" id="client-env">{"locale":"en","featureFlags":["actions_caches_react_view","actions_enable_background_steps","actions_new_hosted_runner_image_select_sizes_and_versions","actions_workflow_language_service_allow_case_function","actions_workflows_react_toggle","agent_author_search_expansion","agent_author_search_expansion_ui_pulls","ai_resource_search","alternate_user_config_repo","billing_billable_licenses_cost_center_bucket_fix","billing_budget_expiration","billing_cost_center_list_assigned_resources","billing_discount_threshold_notification","billing_shared_compute_usage","branches_sidebar_layout","ccr_implement_suggestion_refresh","code_quality_enablement_banner_targeting","code_quality_remove_preview","code_view_checks_live_updates","code_view_raf_sticky_lines","codemirror_inp_optimizations","codespaces_prebuild_region_target_update","coding_agent_third_party_model_ui","copilot-software-factories","copilot_agent_snippy","copilot_api_agentic_issue_marshal_yaml","copilot_automation_continuous_history","copilot_automation_repo_mcp_servers","copilot_automations_pagination","copilot_background_shell_workbench","copilot_base_model_policy_row","copilot_chat_auto_mode_v2","copilot_chat_clear_model_selection_for_default_change","copilot_chat_disable_model_picker_while_streaming","copilot_chat_increase_token_padding","copilot_chat_vision_dotcom_chat_ga_gate","copilot_css_textarea_autosize","copilot_custom_copilots","copilot_custom_copilots_feature_preview","copilot_duplicate_thread","copilot_extensions_removal_on_marketplace","copilot_fix_failed_workflows_all_skus","copilot_hide_hovercard","copilot_immersive_task_hyperlinking","copilot_issue_list_show_more","copilot_managed_settings_validation_file_links","copilot_mission_control_agent_merge_fix_ci","copilot_mission_control_agent_merge_resolve_conflicts","copilot_mission_control_agents_repository_task_detail","copilot_mission_control_agents_task_detail","copilot_mission_control_ahp_diff","copilot_mission_control_ahp_diff_workbench","copilot_mission_control_ahp_local_images","copilot_mission_control_automation_grouping","copilot_mission_control_awps_batching","copilot_mission_control_create_pull_request_client_tool","copilot_mission_control_create_repository_client_tool","copilot_mission_control_early_stop","copilot_mission_control_environments_web_kickoff","copilot_mission_control_hide_task_list_counts","copilot_mission_control_independent_mode_controls","copilot_mission_control_messaging_app_dm_steering","copilot_mission_control_needs_attention","copilot_mission_control_pinned_tasks","copilot_mission_control_reasoning_effort","copilot_mission_control_reserved_sandbox_tasks","copilot_mission_control_reuse_project_workspace","copilot_mission_control_sandbox_request_image_override","copilot_mission_control_session_client_attribution","copilot_mission_control_task_alive_updates","copilot_mission_control_task_sharing","copilot_mission_control_use_api_gateway","copilot_org_policy_page_focus_mode","copilot_policy_ui_refresh","copilot_pr_chat_thread_persistence","copilot_quick_chat_default_chat_scope","copilot_quick_chat_project_sessions","copilot_quick_chat_recent_artifact_sessions","copilot_share_active_subthread","copilot_spaces_ga","copilot_spaces_individual_policies_ga","copilot_swe_agent_authorization_status_ui","copilot_swe_agent_automation_completed_trigger","copilot_swe_agent_automation_failed_trigger","copilot_swe_agent_automation_repository_owned","copilot_swe_agent_automation_resource_scoped_writes","copilot_swe_agent_code_scanning_alert_trigger","copilot_swe_agent_dependabot_alert_trigger","copilot_swe_agent_discussion_comment_trigger","copilot_swe_agent_discussion_opened_trigger","copilot_swe_agent_discussion_updated_trigger","copilot_swe_agent_hide_model_picker_if_only_auto","copilot_swe_agent_issue_assigned_trigger","copilot_swe_agent_issue_closed_trigger","copilot_swe_agent_issue_comment_trigger","copilot_swe_agent_issue_labeled_trigger","copilot_swe_agent_issue_reopened_trigger","copilot_swe_agent_mcp_permission_gate","copilot_swe_agent_merge_conflict_trigger","copilot_swe_agent_pr_comment_model_picker","copilot_swe_agent_pull_request_assigned_trigger","copilot_swe_agent_pull_request_closed_trigger","copilot_swe_agent_pull_request_comment_trigger","copilot_swe_agent_pull_request_converted_to_draft_trigger","copilot_swe_agent_pull_request_labeled_trigger","copilot_swe_agent_pull_request_merged_trigger","copilot_swe_agent_pull_request_opened_trigger","copilot_swe_agent_pull_request_ready_for_review_trigger","copilot_swe_agent_pull_request_reopened_trigger","copilot_swe_agent_pull_request_review_dismissed_trigger","copilot_swe_agent_pull_request_review_requested_trigger","copilot_swe_agent_pull_request_review_submitted_trigger","copilot_swe_agent_pull_request_review_thread_resolved_trigger","copilot_swe_agent_pull_request_review_thread_unresolved_trigger","copilot_swe_agent_pull_request_synchronize_trigger","copilot_swe_agent_secret_scanning_alert_trigger","copilot_swe_agent_sub_issue_added_trigger","copilot_swe_agent_use_subagents","copilot_task_api_github_rest_style","copilot_task_scoped_alive_channel","copilot_token_based_billing","copilot_unconfigured_is_inherited","copilot_user_can_upgrade_plan_field","datadog_rum","datadog_rum_custom_metrics","fgpat_permissions_selector_redesign","glc_code_quality_repo_settings_workflow_config","global_issues_filtered_list_layout","hyperspace_2025_logged_out_batch_1","hyperspace_2025_logged_out_batch_2","hyperspace_2025_logged_out_batch_3","in_product_messaging_datadog_monitoring","ipm_ubb_individual_budget_banner","issue_fields_multi_select","issue_inline_avatars","issue_relative_time_micro","issues_hide_closed_sub_issues","issues_index_query_persistence","issues_inline_label_creation","issues_inline_milestone_creation","issues_lazy_load_comment_box_suggestions","issues_react_chrome_container_query_fix","issues_react_include_bots_in_pickers","issues_react_ui_feedback","labels_archiving","labels_archiving_info","landing_pages_ninetailed","lifecycle_label_name_updates","marketing_cookie_consent_banner","marketing_pages_search_explore_provider","memex_live_update_hovercard","memex_mwl_filter_field_delimiter","memex_remove_deprecated_type_issue","memex_roadmap_drag_style","merge_queue_restricted_pushers_warning","merge_status_header_feedback","new_batched_queries_hook","octocaptcha_origin_optimization","one_copilot_chat_owner_split_picker","one_copilot_chat_queue_submit_while_reconnecting","one_copilot_grouped_tool_calls","one_copilot_simplified_environment_picker","pr_unified_on_empty_side","primer_react_css_anchor_positioning","primer_react_merged_forwarded_refs","primer_react_timeline_list_semantics","prs_contextual_comment_controls","prs_copilot_app_open_action","prs_copilot_assignee_session_indicator","prs_css_anchor_positioning","prs_desktop_checkout","prs_mergeability_live_updates_trailing","prs_overview_for_you_refresh","prs_overview_react_public_preview","prx_files","pull_request_file_tree_prefetch_on_hover_50ms","pull_request_files_virtualization","pull_request_persister","pull_request_stacks_auto_merge_stack_permission","pull_request_stacks_navigation_shortcuts","pull_request_virtualization_image_estimate","pull_request_virtualization_loader_batching","pull_request_virtualization_scroll_compensation","pull_request_virtualization_scroll_intent","pull_requests_deferred_highlight_fallback","pull_requests_persistent_whitespace_preferences","pull_requests_stacks_view_ui","pull_requests_stacks_view_ui_checks","react_blob_isolate_code_lines","react_blob_ssr_content_visibility","react_data_router_nonblocking_revalidation","react_data_router_tanstack_allowed","react_query_props_with_key","react_sandbox_future_tanstack","repo_app_turbo","repo_issues_sidebar_layout","repo_pulls_dashboard_surface","repos_contributors_limited_default_range","repository_suggester_elastic_search","rulesets_actor_list_editor","sample_network_conn_type","scribe_artifacts_api","scribe_artifacts_html","secret_scanning_public_monitoring_hide_preview_labels","secret_scanning_public_monitoring_hide_validity_coming_soon","see_who_reacted","selector_observer_skip_detached_adds","session_logs_ungroup_reasoning_text","set_sha256_on_repo_creation_form","site_banner_desktop_copilot_app","site_copilot_consolidation_page","site_global_banner_ghe_copilot","site_global_banner_technology_partner_of_the_year_2026","site_homepage_refresh_2026","site_landing_pages_stable_canvas_position","speculation_rules_ui_service","suggest_custom_property_values_copilot","suppress_automated_browser_vitals","swp_forms_disable_octocaptcha","track_notifications_settings_usage","trusted_types_policies","trusted_types_worker","turbo_link_eligibility_optimization","ui_route_code_view","ui_route_repos","ui_service_eligible","unified_batch_pr_comments","universe26_banners_post_on-d","update_issue_suggestions","viewscreen_sandbox","warn_inaccessible_attachments","webp_support","workstream_plugin_bootstrap"],"login":"drnitishaaggarwal-cloud","uiComputeCohort":"treatment","githubDomain":"https://github.com","copilotApiOverrideUrl":"https://api.individual.githubcopilot.com","cmcApiUrl":"https://api.github.com/cmc_internal/api"}</script>
+<script type="application/json" id="datadog-rum-config">{"version":1,"applicationId":"851db457-c3a9-463b-b2e5-906d1ef37118","clientToken":"eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaEpJaEpoZFhSb1pXNTBhV05oZEdWa0Jqb0dSVlE9IiwiZXhwIjoiMjAyNi0xMS0xMFQxNjo1Mjo1My42MTZaIiwicHVyIjoiYnJvd3Nlcl9zdGF0czpjbGllbnRfdG9rZW4ifX0--be75d89e8dcc2811508b7aa8c2762cad8e939465","site":"datadoghq.com","service":"github-ui","env":"production","proxyUrl":"https://api.github.com/_private/browser/rum","sessionSampleRate":100.0,"profilingSampleRate":0.0,"remoteConfiguration":{"id":"98395865-d221-4f97-80fe-bfb0d289ce72"}}</script>
+<link crossorigin="anonymous" rel="modulepreload" href="https://github.githubassets.com/assets/wp-runtime-7b01672e92f67305.js">
+<link crossorigin="anonymous" rel="modulepreload" href="https://github.githubassets.com/assets/app-runtime-efb239e5ad18067e.js">
+<link crossorigin="anonymous" rel="modulepreload" href="https://github.githubassets.com/assets/react-core-70c5f4ec5d8e7263.js">
+<link crossorigin="anonymous" rel="modulepreload" href="https://github.githubassets.com/assets/pb-25305857c53068ff.js">
+<script crossorigin="anonymous" type="module" src="./Class_7_ICSE_Maths_Quiz_Linear_Equations_50_files/core-8e19dafe5680eae7.js.download" defer="defer"></script>
+<link crossorigin="anonymous" media="all" rel="stylesheet" href="./Class_7_ICSE_Maths_Quiz_Linear_Equations_50_files/app-runtime.29e2004e419b2c04.module.css">
+<link crossorigin="anonymous" media="all" rel="stylesheet" href="./Class_7_ICSE_Maths_Quiz_Linear_Equations_50_files/react-core.90fe665a7f2bd8d3.module.css">
+<script crossorigin="anonymous" type="module" src="./Class_7_ICSE_Maths_Quiz_Linear_Equations_50_files/repositories-d4035d4a512cb9a3.js.download" defer="defer"></script>
+  
+  <link crossorigin="anonymous" rel="modulepreload" href="https://github.githubassets.com/assets/usy-61449034908daf97.js">
+<script crossorigin="anonymous" type="module" src="./Class_7_ICSE_Maths_Quiz_Linear_Equations_50_files/editor-02c082d048ccbb3e.js.download" defer="defer"></script>
+
+
+  <title>Upload files · drnitishaaggarwal-cloud/online-quiz-website-class-7</title>
+
+
+
+  <meta name="route-pattern" content="/:user_id/:repository/upload(/:name)(/*path)(.:format)" data-turbo-transient="">
+  <meta name="route-controller" content="repository_uploads" data-turbo-transient="">
+  <meta name="route-action" content="index" data-turbo-transient="">
+  <meta name="fetch-nonce" content="v2:a49cbc32-67e4-85e1-fa2b-fc2034e1aef4">
+
+    
+  <meta name="current-catalog-service-hash" content="78339b992060a6a11548e4f18438b88c3ea1eec1b6705962d1fd145365fa2db1">
+
+
+  <meta name="request-id" content="C207:204E1B:52E29D:770DB3:6AF1FA55" data-turbo-transient="true"><meta name="html-safe-nonce" content="a01b97de48cf29be475c913b95a67ff293241b3d871ba9eea99b0e88876b7d60" data-turbo-transient="true"><meta name="visitor-payload" content="eyJyZWZlcnJlciI6Imh0dHBzOi8vZ2l0aHViLmNvbS9kcm5pdGlzaGFhZ2dhcndhbC1jbG91ZC9vbmxpbmUtcXVpei13ZWJzaXRlLWNsYXNzLTciLCJyZXF1ZXN0X2lkIjoiQzIwNzoyMDRFMUI6NTJFMjlEOjc3MERCMzo2QUYxRkE1NSIsInZpc2l0b3JfaWQiOiI4NTA1NDY0OTYwODgyNjk4MTIzIiwicmVnaW9uX2VkZ2UiOiJjZW50cmFsaW5kaWEiLCJyZWdpb25fcmVuZGVyIjoiY2VudHJhbHVzIn0=" data-turbo-transient="true"><meta name="visitor-hmac" content="d2f0440c6dff5e42748ff1e0f2d134d10318511da39a824fd3b048d5d0d6a59f" data-turbo-transient="true">
+
+
+    <meta name="hovercard-subject-tag" content="repository:1451562770" data-turbo-transient="">
+
+
+  <meta name="github-keyboard-shortcuts" content="repository,copilot" data-turbo-transient="true">
+  
+
+  <meta name="selected-link" value="repo_source" data-turbo-transient="">
+  <link rel="assets" href="https://github.githubassets.com/">
+
+    <meta name="google-site-verification" content="Apib7-x98H0j5cPqHWwSMm6dNU4GmODRoqxLiDzdx9I">
+
+<meta name="octolytics-url" content="https://collector.github.com/github/collect"><meta name="octolytics-actor-id" content="354524430"><meta name="octolytics-actor-login" content="drnitishaaggarwal-cloud"><meta name="octolytics-actor-hash" content="16d2d0ee45b1dd26cade209009ec99628d2487e19dbea1c794eb1bf627d1988a">
+
+
+
+
+
+  <meta name="analytics-location" content="/&lt;user-name&gt;/&lt;repo-name&gt;/repository_uploads/index" data-turbo-transient="true">
+
+  
+
+
+
+
+    <meta name="user-login" content="drnitishaaggarwal-cloud">
+
+  <link rel="sudo-modal" href="https://github.com/sessions/sudo_modal">
+
+    <meta name="viewport" content="width=device-width">
+
+    
+
+      <meta name="description" content="preparing online Math quiz website  for class 7 . Contribute to drnitishaaggarwal-cloud/online-quiz-website-class-7 development by creating an account on GitHub.">
+
+      <link rel="search" type="application/opensearchdescription+xml" href="https://github.com/opensearch.xml" title="GitHub">
+
+    <link rel="fluid-icon" href="https://github.com/fluidicon.png" title="GitHub">
+    <meta property="fb:app_id" content="1401488693436528">
+    <meta name="apple-itunes-app" content="app-id=1477376905, app-argument=https://github.com/drnitishaaggarwal-cloud/online-quiz-website-class-7/upload/main">
+
+      <meta name="twitter:image" content="https://opengraph.githubassets.com/0e5c33f68bf09844b9671db2eab98ca36c7eb6c8aec67a943430b70a6e82b439/drnitishaaggarwal-cloud/online-quiz-website-class-7"><meta name="twitter:site" content="@github"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Upload files · drnitishaaggarwal-cloud/online-quiz-website-class-7"><meta name="twitter:description" content="preparing online Math quiz website  for class 7 . Contribute to drnitishaaggarwal-cloud/online-quiz-website-class-7 development by creating an account on GitHub.">
+  <meta property="og:image" content="https://opengraph.githubassets.com/0e5c33f68bf09844b9671db2eab98ca36c7eb6c8aec67a943430b70a6e82b439/drnitishaaggarwal-cloud/online-quiz-website-class-7"><meta property="og:image:alt" content="preparing online Math quiz website  for class 7 . Contribute to drnitishaaggarwal-cloud/online-quiz-website-class-7 development by creating an account on GitHub."><meta property="og:image:width" content="1200"><meta property="og:image:height" content="600"><meta property="og:site_name" content="GitHub"><meta property="og:type" content="object"><meta property="og:title" content="Upload files · drnitishaaggarwal-cloud/online-quiz-website-class-7"><meta property="og:url" content="https://github.com/drnitishaaggarwal-cloud/online-quiz-website-class-7"><meta property="og:description" content="preparing online Math quiz website  for class 7 . Contribute to drnitishaaggarwal-cloud/online-quiz-website-class-7 development by creating an account on GitHub.">
+  
+
+
+      <link rel="shared-web-socket" href="wss://alive.github.com/_sockets/u/354524430/ws?session=eyJ2IjoiVjMiLCJ1IjozNTQ1MjQ0MzAsInMiOjI0MDg0NzkzODQsImMiOjk3Mzc3MTE1MywidCI6MTc5NDI0MzE3M30=--0ead66032ad9d8f3653bfae1b264d935dd7dc40e097c4b85c8c77d9fff689582" data-refresh-url="/_alive" data-session-id="4517ae3c17d95ecb42ed29c27ec5b61f3e6895ce27ca45b06b424c114e9779da">
+
+      <meta name="hostname" content="github.com">
+
+
+      <meta name="keyboard-shortcuts-preference" content="all">
+      <meta name="hovercards-preference" content="true">
+      <meta name="announcement-preference-hovercard" content="true">
+
+        <meta name="expected-hostname" content="github.com">
+
+
+  <meta http-equiv="x-pjax-version" content="23f6b665eaa91f6bda02febb0f136622c2416e52ac3b7900716547ed2484189b" data-turbo-track="reload">
+  <meta http-equiv="x-pjax-csp-version" content="a242595c1b3c801eb6eaf4de46bc21ee3ed6daa8d52f3a4e7ed75f1fd73bdbf8" data-turbo-track="reload">
+  <meta http-equiv="x-pjax-css-version" content="a10f17a7458bdca2c97a29ec3ba699546a8fd0636fa0d2fec10ece7eac4e0326" data-turbo-track="reload">
+  <meta http-equiv="x-pjax-js-version" content="46d94313f2a33bef4f0360043cd2cb845dfa372077ae3096a83d7c2bf1879e8b" data-turbo-track="reload">
+
+  <meta name="turbo-cache-control" content="no-preview" data-turbo-transient="">
+
+      <meta name="go-import" content="github.com/drnitishaaggarwal-cloud/online-quiz-website-class-7 git https://github.com/drnitishaaggarwal-cloud/online-quiz-website-class-7.git">
+
+  <meta name="octolytics-dimension-user_id" content="354524430"><meta name="octolytics-dimension-user_login" content="drnitishaaggarwal-cloud"><meta name="octolytics-dimension-repository_id" content="1451562770"><meta name="octolytics-dimension-repository_nwo" content="drnitishaaggarwal-cloud/online-quiz-website-class-7"><meta name="octolytics-dimension-repository_public" content="true"><meta name="octolytics-dimension-repository_is_fork" content="false"><meta name="octolytics-dimension-repository_network_root_id" content="1451562770"><meta name="octolytics-dimension-repository_network_root_nwo" content="drnitishaaggarwal-cloud/online-quiz-website-class-7">
+  <meta name="current-repo-nwo" content="drnitishaaggarwal-cloud/online-quiz-website-class-7">
+
+
+
+    
+
+    <meta name="turbo-body-classes" content="logged-in env-production page-responsive text-rendering-optimize-speed">
+  <meta name="disable-turbo" content="false">
+
+
+  <meta name="browser-stats-url" content="https://api.github.com/_private/browser/stats">
+
+
+  <meta name="browser-errors-url" content="https://api.github.com/_private/browser/errors">
+
+  <meta name="release" content="81ee28bb8d422d813f5b3b6d02bf4fff5c7b7730" data-turbo-track="reload">
+  <meta name="ui-target" content="full">
+
+  <link rel="mask-icon" href="https://github.githubassets.com/assets/pinned-octocat-093da3e6fa40.svg" color="#000000">
+  <link rel="alternate icon" class="js-site-favicon" type="image/png" href="https://github.githubassets.com/favicons/favicon.png">
+  <link rel="icon" class="js-site-favicon" type="image/svg+xml" href="https://github.githubassets.com/favicons/favicon.svg" data-base-href="https://github.githubassets.com/favicons/favicon">
+
+<meta name="theme-color" content="#1e2327">
+<meta name="color-scheme" content="light dark">
+
+
+  <link rel="manifest" href="https://github.com/manifest.json" crossorigin="use-credentials">
+
+  <link data-rspack="@github-ui/github-ui:chunk-kq9" rel="stylesheet" href="./Class_7_ICSE_Maths_Quiz_Linear_Equations_50_files/kq9.fe1d3ed6827ca69b.module.css" crossorigin="anonymous"><link data-rspack="@github-ui/github-ui:chunk-bvx" rel="stylesheet" href="./Class_7_ICSE_Maths_Quiz_Linear_Equations_50_files/bvx.2a65d3e6758d73a7.module.css" crossorigin="anonymous"><link data-rspack="@github-ui/github-ui:chunk-u2l" rel="stylesheet" href="./Class_7_ICSE_Maths_Quiz_Linear_Equations_50_files/u2l.0c500f555cd81ce4.module.css" crossorigin="anonymous"><link data-rspack="@github-ui/github-ui:chunk-mg" rel="stylesheet" href="./Class_7_ICSE_Maths_Quiz_Linear_Equations_50_files/mg.eddae8b342c381f8.module.css" crossorigin="anonymous"><link data-rspack="@github-ui/github-ui:chunk-1t" rel="stylesheet" href="./Class_7_ICSE_Maths_Quiz_Linear_Equations_50_files/1t.aaa3299932643380.module.css" crossorigin="anonymous"><link data-rspack="@github-ui/github-ui:chunk-n3o" rel="stylesheet" href="./Class_7_ICSE_Maths_Quiz_Linear_Equations_50_files/n3o.b97ebb1d1e5797fa.module.css" crossorigin="anonymous"><link data-rspack="@github-ui/github-ui:chunk-q4" rel="stylesheet" href="./Class_7_ICSE_Maths_Quiz_Linear_Equations_50_files/q4.57024d69717dd307.module.css" crossorigin="anonymous"><link data-rspack="@github-ui/github-ui:chunk-22" rel="stylesheet" href="./Class_7_ICSE_Maths_Quiz_Linear_Equations_50_files/22.abd992cb84240a7f.module.css" crossorigin="anonymous"><link data-rspack="@github-ui/github-ui:chunk-rnt" rel="stylesheet" href="./Class_7_ICSE_Maths_Quiz_Linear_Equations_50_files/rnt.76b278c6792fa3bd.module.css" crossorigin="anonymous"><link data-rspack="@github-ui/github-ui:chunk-3x4" rel="stylesheet" href="./Class_7_ICSE_Maths_Quiz_Linear_Equations_50_files/3x4.4a64a66efc63bb57.module.css" crossorigin="anonymous"><link data-rspack="@github-ui/github-ui:chunk-nb9" rel="stylesheet" href="./Class_7_ICSE_Maths_Quiz_Linear_Equations_50_files/nb9.2b7f54fccce3e84e.module.css" crossorigin="anonymous"><link data-rspack="@github-ui/github-ui:chunk-5xz" rel="stylesheet" href="./Class_7_ICSE_Maths_Quiz_Linear_Equations_50_files/5xz.552f81370c613a9e.module.css" crossorigin="anonymous"><link data-rspack="@github-ui/github-ui:chunk-bas" rel="stylesheet" href="./Class_7_ICSE_Maths_Quiz_Linear_Equations_50_files/bas.ddf329ad418de717.module.css" crossorigin="anonymous"><link data-rspack="@github-ui/github-ui:chunk-01" rel="stylesheet" href="./Class_7_ICSE_Maths_Quiz_Linear_Equations_50_files/01.d763ac2b84e7b624.module.css" crossorigin="anonymous"><link data-rspack="@github-ui/github-ui:chunk-ht" rel="stylesheet" href="./Class_7_ICSE_Maths_Quiz_Linear_Equations_50_files/ht.eb7c08e8b4b64455.module.css" crossorigin="anonymous"><link data-rspack="@github-ui/github-ui:chunk-v8" rel="stylesheet" href="./Class_7_ICSE_Maths_Quiz_Linear_Equations_50_files/v8.1495c066dac5a9e9.module.css" crossorigin="anonymous"><link data-rspack="@github-ui/github-ui:chunk-pw" rel="stylesheet" href="./Class_7_ICSE_Maths_Quiz_Linear_Equations_50_files/pw.1c7ee77de82d1f32.module.css" crossorigin="anonymous"><link data-rspack="@github-ui/github-ui:chunk-ubn" rel="stylesheet" href="./Class_7_ICSE_Maths_Quiz_Linear_Equations_50_files/ubn.fdb22ac0c287fd3b.module.css" crossorigin="anonymous"></head>
+
+  <body class="logged-in env-production page-responsive text-rendering-optimize-speed" style="word-wrap: break-word;">
+    <div data-turbo-body="" class="logged-in env-production page-responsive text-rendering-optimize-speed" style="word-wrap: break-word;">
+      <div id="__primerPortalRoot__" style="z-index: 1000; position: absolute; width: 100%;" data-turbo-permanent=""></div>
+      
+
+    <div class="position-relative header-wrapper js-header-wrapper ">
+      <a href="https://github.com/drnitishaaggarwal-cloud/online-quiz-website-class-7/upload/main#start-of-content" data-skip-target-assigned="false" class="tmp-p-3 color-bg-accent-emphasis color-fg-on-emphasis show-on-focus js-skip-to-content">Skip to content</a>
+
+      <span data-view-component="true" class="progress-pjax-loader Progress position-fixed width-full">
+    <span style="width: 0%;" data-view-component="true" class="Progress-item progress-pjax-loader-bar left-0 top-0 color-bg-accent-emphasis"></span>
+</span>      
+      <link crossorigin="anonymous" rel="modulepreload" href="https://github.githubassets.com/assets/primer-react-76ed19f429a89450.js" fetchpriority="low">
+<link crossorigin="anonymous" rel="modulepreload" href="https://github.githubassets.com/assets/ncx-6706f20793d34656.js" fetchpriority="low">
+<link crossorigin="anonymous" rel="modulepreload" href="https://github.githubassets.com/assets/t7l-8213ea7f1bea9e80.js" fetchpriority="low">
+<link crossorigin="anonymous" rel="modulepreload" href="https://github.githubassets.com/assets/25-dc1905d8982f3606.js" fetchpriority="low">
+<link crossorigin="anonymous" rel="modulepreload" href="https://github.githubassets.com/assets/36-9db26e4ed93b8314.js" fetchpriority="low">
+<link crossorigin="anonymous" rel="modulepreload" href="https://github.githubassets.com/assets/keyboard-shortcuts-dialog-5ac01a244109cba4.js" fetchpriority="low">
+<link crossorigin="anonymous" media="all" rel="stylesheet" href="./Class_7_ICSE_Maths_Quiz_Linear_Equations_50_files/primer-react-css.7123e0f1ca4d1d27.module.css">
+<link crossorigin="anonymous" media="all" rel="stylesheet" href="./Class_7_ICSE_Maths_Quiz_Linear_Equations_50_files/keyboard-shortcuts-dialog.c66d8807377d4c1f.module.css">
+
+<react-partial partial-name="keyboard-shortcuts-dialog" data-ssr="false" data-attempted-ssr="false" data-react-profiling="false" data-catalyst="" class="loaded">
+  
+  <script type="application/json" data-target="react-partial.embeddedData">{"props":{"docsUrl":"https://docs.github.com/get-started/accessibility/keyboard-shortcuts"}}</script>
+  <div data-target="react-partial.reactRoot"><div class="d-none"></div></div>
+</react-partial>
+
+
+
+
+
+      
+
+          <link crossorigin="anonymous" rel="modulepreload" href="https://github.githubassets.com/assets/om-cc69bdd2856387a1.js" fetchpriority="low">
+<link crossorigin="anonymous" rel="modulepreload" href="https://github.githubassets.com/assets/app-install-banner-partial-b366b6ab4599474d.js" fetchpriority="low">
+<link crossorigin="anonymous" media="all" rel="stylesheet" href="./Class_7_ICSE_Maths_Quiz_Linear_Equations_50_files/primer-react-css.7123e0f1ca4d1d27.module.css">
+<link crossorigin="anonymous" media="all" rel="stylesheet" href="./Class_7_ICSE_Maths_Quiz_Linear_Equations_50_files/app-install-banner-partial.b36afe397887e502.module.css">
+
+<react-partial partial-name="app-install-banner-partial" data-ssr="false" data-attempted-ssr="false" data-react-profiling="false" data-catalyst="" class="loaded">
+  
+  <script type="application/json" data-target="react-partial.embeddedData">{"props":{}}</script>
+  <div data-target="react-partial.reactRoot"></div>
+</react-partial>
+
+
+          
+
+                  <link crossorigin="anonymous" rel="modulepreload" href="https://github.githubassets.com/assets/360-fd75fa985cb61e08.js" fetchpriority="low">
+<link crossorigin="anonymous" rel="modulepreload" href="https://github.githubassets.com/assets/9zy-9ec7aab53bbbd693.js" fetchpriority="low">
+<link crossorigin="anonymous" rel="modulepreload" href="https://github.githubassets.com/assets/dp-4402ba6fa142c5e6.js" fetchpriority="low">
+<link crossorigin="anonymous" rel="modulepreload" href="https://github.githubassets.com/assets/f2s-61856b80d5ace991.js" fetchpriority="low">
+<link crossorigin="anonymous" rel="modulepreload" href="https://github.githubassets.com/assets/8f-e9a5253e38ddfb2d.js" fetchpriority="low">
+<link crossorigin="anonymous" rel="modulepreload" href="https://github.githubassets.com/assets/gpd-1a037aba163d814d.js" fetchpriority="low">
+<link crossorigin="anonymous" rel="modulepreload" href="https://github.githubassets.com/assets/aeu-d30a9a5c4e6da894.js" fetchpriority="low">
+<link crossorigin="anonymous" rel="modulepreload" href="https://github.githubassets.com/assets/7a-a51253c64b64ec54.js" fetchpriority="low">
+<link crossorigin="anonymous" rel="modulepreload" href="https://github.githubassets.com/assets/p80-7dd16f4353ab76f9.js" fetchpriority="low">
+<link crossorigin="anonymous" rel="modulepreload" href="https://github.githubassets.com/assets/r3a-358c2a9c81569c8b.js" fetchpriority="low">
+<link crossorigin="anonymous" rel="modulepreload" href="https://github.githubassets.com/assets/io-343e535e19037c60.js" fetchpriority="low">
+<link crossorigin="anonymous" rel="modulepreload" href="https://github.githubassets.com/assets/3m-4cbceb3921eff449.js" fetchpriority="low">
+<link crossorigin="anonymous" rel="modulepreload" href="https://github.githubassets.com/assets/eth-b7945d9c278474c3.js" fetchpriority="low">
+<link crossorigin="anonymous" rel="modulepreload" href="https://github.githubassets.com/assets/fdb-a890f6f7a2e0dfeb.js" fetchpriority="low">
+<link crossorigin="anonymous" rel="modulepreload" href="https://github.githubassets.com/assets/55-9be65a88178b9710.js" fetchpriority="low">
+<link crossorigin="anonymous" rel="modulepreload" href="https://github.githubassets.com/assets/6c-5994b698e3987bc6.js" fetchpriority="low">
+<link crossorigin="anonymous" rel="modulepreload" href="https://github.githubassets.com/assets/8e-5f05d2087a9e662d.js" fetchpriority="low">
+<link crossorigin="anonymous" rel="modulepreload" href="https://github.githubassets.com/assets/global-nav-bar-b5b074169f9b94ed.js" fetchpriority="low">
+<link crossorigin="anonymous" media="all" rel="stylesheet" href="./Class_7_ICSE_Maths_Quiz_Linear_Equations_50_files/primer-react-css.7123e0f1ca4d1d27.module.css">
+<link crossorigin="anonymous" media="all" rel="stylesheet" href="./Class_7_ICSE_Maths_Quiz_Linear_Equations_50_files/global-nav-bar.d3682c0ad368eb71.module.css">
+
+<react-partial partial-name="global-nav-bar" data-ssr="true" data-attempted-ssr="true" data-react-profiling="false" data-catalyst="" class="loaded">
+  
+  <script type="application/json" data-target="react-partial.embeddedData">{"props":{"contextRegion":{"crumbs":[{"crumb_type":"user","label":"drnitishaaggarwal-cloud","is_root":false,"href":"/drnitishaaggarwal-cloud"},{"crumb_type":"repository","label":"online-quiz-website-class-7","is_root":false,"href":"/drnitishaaggarwal-cloud/online-quiz-website-class-7"}],"localNavigation":[{"id":"code","icon":"code","label":"Code","href":"/drnitishaaggarwal-cloud/online-quiz-website-class-7","selectedLinks":["repo_source","repo_downloads","repo_commits","repo_releases","repo_tags","repo_branches","repo_packages","repo_deployments","repo_attestations"],"popoverTarget":false,"commandId":"repositories:go-to-code","reactNav":{"appTarget":"code-view","anchor":"code-view-repo-link"},"turboNav":{"frame":"repo-content-turbo-frame"}},{"id":"issues","icon":"issue-opened","label":"Issues","href":"/drnitishaaggarwal-cloud/online-quiz-website-class-7/issues","selectedLinks":["repo_issues","repo_labels","repo_milestones"],"count":0,"popoverTarget":false,"commandId":"repositories:go-to-issues","reactNav":{"appTarget":"repo","anchor":null},"turboNav":{"frame":"repo-content-turbo-frame"}},{"id":"pull-requests","icon":"git-pull-request","label":"Pull requests","href":"/drnitishaaggarwal-cloud/online-quiz-website-class-7/pulls","selectedLinks":["repo_pulls","checks"],"count":0,"popoverTarget":false,"commandId":"repositories:go-to-pull-requests","reactNav":{"appTarget":"repo","anchor":null},"turboNav":{"frame":"repo-content-turbo-frame"}},{"id":"actions","icon":"play","label":"Actions","href":"/drnitishaaggarwal-cloud/online-quiz-website-class-7/actions","selectedLinks":["repo_actions"],"popoverTarget":false,"commandId":"repositories:go-to-actions","reactNav":{"appTarget":"repo","anchor":null},"turboNav":{"frame":"repo-content-turbo-frame"}},{"id":"projects","icon":"table","label":"Projects","href":"/drnitishaaggarwal-cloud/online-quiz-website-class-7/projects","selectedLinks":["repo_projects","new_repo_project","repo_project"],"popoverTarget":false,"commandId":"repositories:go-to-projects","reactNav":{"appTarget":"repo","anchor":null},"turboNav":{"frame":"repo-content-turbo-frame"}},{"id":"wiki","icon":"book","label":"Wiki","href":"/drnitishaaggarwal-cloud/online-quiz-website-class-7/wiki","selectedLinks":["repo_wiki"],"popoverTarget":false,"commandId":"repositories:go-to-wiki","reactNav":{"appTarget":null,"anchor":null},"turboNav":{"frame":"repo-content-turbo-frame"}},{"id":"security-and-quality","icon":"shield","label":"Security and quality","href":"/drnitishaaggarwal-cloud/online-quiz-website-class-7/security","selectedLinks":["security","overview","alerts","policy","token_scanning","code_scanning"],"count":0,"popoverTarget":false,"commandId":"repositories:go-to-security","reactNav":{"appTarget":null,"anchor":null},"turboNav":{"frame":"repo-content-turbo-frame"}},{"id":"insights","icon":"graph","label":"Insights","href":"/drnitishaaggarwal-cloud/online-quiz-website-class-7/pulse","selectedLinks":["repo_graphs","repo_contributors","dependency_graph","dependabot_updates","pulse","people","community"],"popoverTarget":false,"commandId":"repositories:go-to-insights","reactNav":{"appTarget":null,"anchor":null},"turboNav":{"frame":"repo-content-turbo-frame"}},{"id":"settings","icon":"gear","label":"Settings","href":"/drnitishaaggarwal-cloud/online-quiz-website-class-7/settings","selectedLinks":["code_review_limits","code_quality","codespaces_repository_settings","collaborators","custom_tabs","hooks","integration_installations","interaction_limits","issue_template_editor","key_links_settings","license_policy","notifications","repo_announcements","repo_branch_settings","repo_custom_properties","repo_keys_settings","repo_pages_settings","repo_protected_tags_settings","repo_rule_insights","repo_rule_insights_dashboard","repo_rules_bypass_requests","repo_rulesets","repo_settings_copilot_coding_guidelines","repo_settings_copilot_content_exclusion","repo_settings_copilot_dreams","repo_settings_copilot_internet_access","repo_settings_copilot_mcp","repo_settings_copilot_swe_agent","repo_settings","repo_suggestions_settings","reported_content","repository_actions_settings_add_new_runner","repository_actions_settings_general","repository_actions_settings_runner_details","repository_actions_settings_runners","repository_actions_settings","repository_actions_settings_policies","repository_actions_settings_policies_insights","repository_actions_settings_oidc_configuration","repository_drives_settings","repository_environments","role_details","secrets_settings_actions","secrets_settings_agents","secrets_settings_codespaces","secrets_settings_dependabot","secrets","security_analysis","security_products"],"popoverTarget":false,"commandId":"repositories:go-to-settings","reactNav":{"appTarget":null,"anchor":null},"turboNav":{"frame":"repo-content-turbo-frame"}}],"localNavigationUpdateChannel":"eyJjIjoicmVwbzoxNDUxNTYyNzcwOnVzZXI6MzU0NTI0NDMwOnNldHRpbmdzIiwidCI6MTc5NDI0MzE3M30=--e24acb4a41d1ea060bfb81bac03e3e6346cb2eb92afbd2114c79fefec2ed8c78","selectedLink":null,"currentPath":"/drnitishaaggarwal-cloud/online-quiz-website-class-7/upload/main"},"owner":{"login":"drnitishaaggarwal-cloud","name":null,"avatarUrl":"https://avatars.githubusercontent.com/u/354524430?v=4"},"headerLogo":{"href":"/","aria-label":"Homepage "},"notifications":{"indicatorMode":"none","websocketChannel":"eyJjIjoibm90aWZpY2F0aW9uLWNoYW5nZWQ6MzU0NTI0NDMwIiwidCI6MTc5NDI0MzE3M30=--ae81bf1d300412a98c1aec2e9928420d9ed698a2b96e92fd9042265648e2c493","fetchIndicatorSrc":"/notifications/indicator","fetchIndicatorEnabled":true},"issues":{"href":"/issues"},"pulls":{"href":"/pulls"},"contributedRepos":{"href":"/repos"},"copilot":{"show":true,"showAgentsButton":false,"showRelaunchAnnouncement":false,"copilotChatUrl":"/github-copilot/chat?skip_anchor=true","copilotApiUrl":"https://api.individual.githubcopilot.com"},"search":{"show":true,"showCommandPalette":false,"isSearchPage":false,"isJumpToSearch":false,"searchContext":{"scope":"repo:drnitishaaggarwal-cloud/online-quiz-website-class-7","current_repo_name":"online-quiz-website-class-7","current_repo_nwo":"drnitishaaggarwal-cloud/online-quiz-website-class-7","user_id":"drnitishaaggarwal-cloud"}},"commandPalette":null,"enterpriseBar":{"show":false},"globalTransactionalMessage":[],"payloadsUrl":"/_global-navigation/payloads.json?can_toggle_site_admin_and_employee_status=0\u0026is_admin_mode_on=0\u0026is_ui_opted_out=0\u0026show_ui_opt_out=0\u0026v=8","contextRegionUrl":"/_global-navigation/context-region.json"}}</script>
+  <div data-target="react-partial.reactRoot"><link rel="preload" as="image" href="./Class_7_ICSE_Maths_Quiz_Linear_Equations_50_files/354524430"><header aria-label="Global navigation menu" data-component="Stack" class="GlobalNav appHeader__6OmbvL prc-Stack-Stack-UQ9k6" data-gap="none" data-direction="vertical" data-align="stretch" data-wrap="nowrap" data-justify="start" data-padding="none"><div data-component="Stack" class="prc-Stack-Stack-UQ9k6" data-direction="horizontal" data-align="center" data-wrap="nowrap" data-justify="center" data-padding="none"><div data-testid="top-nav-left" data-component="Stack" class="left__VBt0gv withLocalNavigation__FzpnU6 prc-Stack-Stack-UQ9k6" data-gap="condensed" data-direction="horizontal" data-align="stretch" data-wrap="nowrap" data-justify="start" data-padding="normal"><div data-loading-wrapper="true"><button data-component="IconButton" type="button" aria-haspopup="dialog" class="prc-Button-ButtonBase-9n-Xk appHeaderButton__sQ5HIU prc-Button-IconButton-fyge7" data-loading="false" data-no-visuals="true" data-size="medium" data-variant="invisible" aria-labelledby="_R_1b9_"><svg data-component="Octicon" aria-hidden="true" focusable="false" class="octicon octicon-three-bars" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" display="inline-block" overflow="visible" style="vertical-align:text-bottom"><path d="M1 2.75A.75.75 0 0 1 1.75 2h12.5a.75.75 0 0 1 0 1.5H1.75A.75.75 0 0 1 1 2.75Zm0 5A.75.75 0 0 1 1.75 7h12.5a.75.75 0 0 1 0 1.5H1.75A.75.75 0 0 1 1 7.75ZM1.75 12h12.5a.75.75 0 0 1 0 1.5H1.75a.75.75 0 0 1 0-1.5Z"></path></svg></button></div><span class="prc-TooltipV2-Tooltip-tLeuB" data-direction="s" data-component="Tooltip" aria-hidden="true" id="_R_1b9_" popover="auto">Open menu</span><div class="d-none"></div><a data-component="IconButton" type="button" class="prc-Button-ButtonBase-9n-Xk appHeaderHome__5NxwyK prc-Button-IconButton-fyge7" data-loading="false" data-no-visuals="true" data-size="medium" data-variant="invisible" aria-labelledby="_R_1j9_" href="https://github.com/" data-discover="true"><svg data-component="Octicon" aria-hidden="true" focusable="false" class="octicon octicon-mark-github" viewBox="0 0 24 24" width="32" height="32" fill="currentColor" display="inline-block" overflow="visible" style="vertical-align:text-bottom"><path d="M10.226 17.284c-2.965-.36-5.054-2.493-5.054-5.256 0-1.123.404-2.336 1.078-3.144-.292-.741-.247-2.314.09-2.965.898-.112 2.111.36 2.83 1.01.853-.269 1.752-.404 2.853-.404 1.1 0 1.999.135 2.807.382.696-.629 1.932-1.1 2.83-.988.315.606.36 2.179.067 2.942.72.854 1.101 2 1.101 3.167 0 2.763-2.089 4.852-5.098 5.234.763.494 1.28 1.572 1.28 2.807v2.336c0 .674.561 1.056 1.235.786 4.066-1.55 7.255-5.615 7.255-10.646C23.5 6.188 18.334 1 11.978 1 5.62 1 .5 6.188.5 12.545c0 4.986 3.167 9.12 7.435 10.669.606.225 1.19-.18 1.19-.786V20.63a2.9 2.9 0 0 1-1.078.224c-1.483 0-2.359-.808-2.987-2.313-.247-.607-.517-.966-1.034-1.033-.27-.023-.359-.135-.359-.27 0-.27.45-.471.898-.471.652 0 1.213.404 1.797 1.235.45.651.921.943 1.483.943.561 0 .92-.202 1.437-.719.382-.381.674-.718.944-.943"></path></svg></a><span class="prc-TooltipV2-Tooltip-tLeuB" data-direction="s" data-component="Tooltip" aria-hidden="true" popover="auto"><span id="_R_1j9_">Homepage <span class="prc-src-InternalVisuallyHidden-2YaI6">(<!-- -->g then d<!-- -->)</span></span><span class="prc-TooltipV2-KeybindingHintContainer-Ymj-3 prc-TooltipV2-HasTextBefore-fdOXj" aria-hidden="true" data-component="Tooltip.KeybindingHintContainer"><kbd class="prc-KeybindingHint-KeybindingHint-qpYIs prc-Text-Text-9mHv3" data-component="KeybindingHint" data-testid="keybinding-hint"><span class="prc-components-Chord-DdhWN prc-components-ChordOnEmphasis-O-4BS prc-components-ChordSmall-c-P-x prc-Text-Text-9mHv3" data-component="Text" data-kbd-chord="true"> <span class="prc-src-InternalVisuallyHidden-2YaI6">g</span><span aria-hidden="true">G</span></span><span class="prc-src-InternalVisuallyHidden-2YaI6">then</span> <span class="prc-components-Chord-DdhWN prc-components-ChordOnEmphasis-O-4BS prc-components-ChordSmall-c-P-x prc-Text-Text-9mHv3" data-component="Text" data-kbd-chord="true"> <span class="prc-src-InternalVisuallyHidden-2YaI6">d</span><span aria-hidden="true">D</span></span></kbd></span></span><div class="d-none"></div></div><div data-testid="top-nav-center" data-component="Stack" class="center__f1ujjY withLocalNavigation__FzpnU6 prc-Stack-Stack-UQ9k6" data-gap="condensed" data-direction="horizontal" data-align="stretch" data-wrap="nowrap" data-justify="start" data-padding="normal"><nav class="contextRegion__Wb1-GR prc-Breadcrumbs-BreadcrumbsBase-3Gb-B" aria-label="Breadcrumbs" data-overflow="menu" data-variant="normal" data-component="Breadcrumbs"><ol class="prc-Breadcrumbs-BreadcrumbsList-BKjpe"><li class="prc-Breadcrumbs-ItemWrapper-k0NLn"><a class="contextCrumb__Q8nET8 prc-Breadcrumbs-Item-jcraJ" data-component="Breadcrumbs.Item" href="https://github.com/drnitishaaggarwal-cloud" data-discover="true"><span class="">drnitishaaggarwal-cloud</span></a></li><li class="prc-Breadcrumbs-ItemWrapper-k0NLn"><a class="contextCrumb__Q8nET8 contextCrumbLast__l2P28s repoPickerCrumb__56N_WW prc-Breadcrumbs-Item-jcraJ" data-component="Breadcrumbs.Item" href="https://github.com/drnitishaaggarwal-cloud/online-quiz-website-class-7" data-discover="true">online-quiz-website-class-7</a><div class="d-none"></div><button data-component="IconButton" type="button" aria-haspopup="true" aria-expanded="false" tabindex="0" class="prc-Button-ButtonBase-9n-Xk contextCrumb__Q8nET8 repoPickerDropdownButton__o-JgKh prc-Button-IconButton-fyge7" data-loading="false" data-no-visuals="true" data-size="small" data-variant="invisible" aria-labelledby="_R_3eqd9_" id="_R_eqd9_" style="anchor-name: --anchored-overlay-anchor-_R_eqd9H1_;"><svg data-component="Octicon" aria-hidden="true" focusable="false" class="octicon octicon-triangle-down" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" display="inline-block" overflow="visible" style="vertical-align:text-bottom"><path d="m4.427 7.427 3.396 3.396a.25.25 0 0 0 .354 0l3.396-3.396A.25.25 0 0 0 11.396 7H4.604a.25.25 0 0 0-.177.427Z"></path></svg></button><span class="prc-TooltipV2-Tooltip-tLeuB" data-direction="s" data-component="Tooltip" aria-hidden="true" popover="auto"><span id="_R_3eqd9_">Switch repository<span class="prc-src-InternalVisuallyHidden-2YaI6">(<!-- -->alt shift r<!-- -->)</span></span><span class="prc-TooltipV2-KeybindingHintContainer-Ymj-3 prc-TooltipV2-HasTextBefore-fdOXj" aria-hidden="true" data-component="Tooltip.KeybindingHintContainer"><kbd class="prc-KeybindingHint-KeybindingHint-qpYIs prc-Text-Text-9mHv3" data-component="KeybindingHint" data-testid="keybinding-hint"><span class="prc-components-Chord-DdhWN prc-components-ChordOnEmphasis-O-4BS prc-components-ChordSmall-c-P-x prc-Text-Text-9mHv3" data-component="Text" data-kbd-chord="true"> <span class="prc-src-InternalVisuallyHidden-2YaI6">alt</span><span aria-hidden="true">Alt</span> <span class="prc-src-InternalVisuallyHidden-2YaI6">shift</span><span aria-hidden="true">⇧</span> <span class="prc-src-InternalVisuallyHidden-2YaI6">r</span><span aria-hidden="true">R</span></span></kbd></span></span></li></ol></nav><div class="searchButtonGroup__lia0l0 prc-ButtonGroup-ButtonGroup-vFUrY" data-component="ButtonGroup"><div class="prc-ButtonGroup-Item-PqvDl"><button data-component="Button" type="button" aria-label="Open quick search dialog, type / to search" class="prc-Button-ButtonBase-9n-Xk appHeaderButton__sQ5HIU searchButton__6Ru-S-" data-loading="false" data-size="medium" data-variant="invisible"><span data-component="buttonContent" data-align="center" class="prc-Button-ButtonContent-Iohp5"><span data-component="leadingVisual" class="prc-Button-Visual-YNt2F prc-Button-LeadingVisual-UySKu prc-Button-VisualWrap-E4cnq"><svg data-component="Octicon" aria-hidden="true" focusable="false" class="octicon octicon-search" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" display="inline-block" overflow="visible" style="vertical-align:text-bottom"><path d="M10.68 11.74a6 6 0 0 1-7.922-8.982 6 6 0 0 1 8.982 7.922l3.04 3.04a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215ZM11.5 7a4.499 4.499 0 1 0-8.997 0A4.499 4.499 0 0 0 11.5 7Z"></path></svg></span><span data-component="text" class="prc-Button-Label-FWkx3"><span class="placeholder__MIdoN6 text__t7BSCl value__JUFO_5">Type <kbd class="kbd__Qnh9QU">/</kbd> to search</span></span></span></button></div><div class="prc-ButtonGroup-Item-PqvDl"></div></div><div class="d-none"></div></div><div data-testid="top-nav-right" data-component="Stack" class="right__5m36ST withLocalNavigation__FzpnU6 rightWithResponsiveCreateButton__JePGAt prc-Stack-Stack-UQ9k6" data-gap="condensed" data-direction="horizontal" data-align="center" data-wrap="nowrap" data-justify="start" data-padding="normal"><div data-testid="top-bar-actions" data-component="Stack" class="prc-Stack-Stack-UQ9k6" data-gap="condensed" data-direction="horizontal" data-align="center" data-wrap="nowrap" data-justify="start" data-padding="none"><div class="hide-sm hide-md"><div class="Wrapper__gliA6s"><div class="prc-ButtonGroup-ButtonGroup-vFUrY" data-component="ButtonGroup"><div class="prc-ButtonGroup-Item-PqvDl"><a data-component="IconButton" type="button" class="prc-Button-ButtonBase-9n-Xk appHeaderButton__sQ5HIU prc-Button-IconButton-fyge7" data-loading="false" data-no-visuals="true" data-size="medium" data-variant="invisible" aria-labelledby="_R_1aif9_" href="https://github.com/copilot" data-discover="true"><svg data-component="Octicon" aria-hidden="true" focusable="false" class="octicon octicon-copilot" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" display="inline-block" overflow="visible" style="vertical-align:text-bottom"><path d="M7.998 15.035c-4.562 0-7.873-2.914-7.998-3.749V9.338c.085-.628.677-1.686 1.588-2.065.013-.07.024-.143.036-.218.029-.183.06-.384.126-.612-.201-.508-.254-1.084-.254-1.656 0-.87.128-1.769.693-2.484.579-.733 1.494-1.124 2.724-1.261 1.206-.134 2.262.034 2.944.765.05.053.096.108.139.165.044-.057.094-.112.143-.165.682-.731 1.738-.899 2.944-.765 1.23.137 2.145.528 2.724 1.261.566.715.693 1.614.693 2.484 0 .572-.053 1.148-.254 1.656.066.228.098.429.126.612.012.076.024.148.037.218.924.385 1.522 1.471 1.591 2.095v1.872c0 .766-3.351 3.795-8.002 3.795Zm0-1.485c2.28 0 4.584-1.11 5.002-1.433V7.862l-.023-.116c-.49.21-1.075.291-1.727.291-1.146 0-2.059-.327-2.71-.991A3.222 3.222 0 0 1 8 6.303a3.24 3.24 0 0 1-.544.743c-.65.664-1.563.991-2.71.991-.652 0-1.236-.081-1.727-.291l-.023.116v4.255c.419.323 2.722 1.433 5.002 1.433ZM6.762 2.83c-.193-.206-.637-.413-1.682-.297-1.019.113-1.479.404-1.713.7-.247.312-.369.789-.369 1.554 0 .793.129 1.171.308 1.371.162.181.519.379 1.442.379.853 0 1.339-.235 1.638-.54.315-.322.527-.827.617-1.553.117-.935-.037-1.395-.241-1.614Zm4.155-.297c-1.044-.116-1.488.091-1.681.297-.204.219-.359.679-.242 1.614.091.726.303 1.231.618 1.553.299.305.784.54 1.638.54.922 0 1.28-.198 1.442-.379.179-.2.308-.578.308-1.371 0-.765-.123-1.242-.37-1.554-.233-.296-.693-.587-1.713-.7Z"></path><path d="M6.25 9.037a.75.75 0 0 1 .75.75v1.501a.75.75 0 0 1-1.5 0V9.787a.75.75 0 0 1 .75-.75Zm4.25.75v1.501a.75.75 0 0 1-1.5 0V9.787a.75.75 0 0 1 1.5 0Z"></path></svg></a><span class="prc-TooltipV2-Tooltip-tLeuB" data-direction="s" data-component="Tooltip" aria-hidden="true" id="_R_1aif9_" popover="auto">Chat with Copilot</span></div><div class="prc-ButtonGroup-Item-PqvDl"><div class="d-none"></div><button data-component="ActionMenu.Button" type="button" aria-label="Open Copilot…" aria-haspopup="true" aria-expanded="false" tabindex="0" class="prc-Button-ButtonBase-9n-Xk appHeaderButton__sQ5HIU CopilotMenu__oPrKz5" data-loading="false" data-size="medium" data-variant="invisible" id="_R_2iif9_" style="anchor-name: --anchored-overlay-anchor-_R_eiif9H1_;"><span data-component="buttonContent" data-align="center" class="prc-Button-ButtonContent-Iohp5"><span data-component="leadingVisual" class="prc-Button-Visual-YNt2F prc-Button-LeadingVisual-UySKu prc-Button-VisualWrap-E4cnq"><svg data-component="Octicon" aria-hidden="true" focusable="false" class="octicon octicon-copilot" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" display="inline-block" overflow="visible" style="vertical-align:text-bottom"><path d="M7.998 15.035c-4.562 0-7.873-2.914-7.998-3.749V9.338c.085-.628.677-1.686 1.588-2.065.013-.07.024-.143.036-.218.029-.183.06-.384.126-.612-.201-.508-.254-1.084-.254-1.656 0-.87.128-1.769.693-2.484.579-.733 1.494-1.124 2.724-1.261 1.206-.134 2.262.034 2.944.765.05.053.096.108.139.165.044-.057.094-.112.143-.165.682-.731 1.738-.899 2.944-.765 1.23.137 2.145.528 2.724 1.261.566.715.693 1.614.693 2.484 0 .572-.053 1.148-.254 1.656.066.228.098.429.126.612.012.076.024.148.037.218.924.385 1.522 1.471 1.591 2.095v1.872c0 .766-3.351 3.795-8.002 3.795Zm0-1.485c2.28 0 4.584-1.11 5.002-1.433V7.862l-.023-.116c-.49.21-1.075.291-1.727.291-1.146 0-2.059-.327-2.71-.991A3.222 3.222 0 0 1 8 6.303a3.24 3.24 0 0 1-.544.743c-.65.664-1.563.991-2.71.991-.652 0-1.236-.081-1.727-.291l-.023.116v4.255c.419.323 2.722 1.433 5.002 1.433ZM6.762 2.83c-.193-.206-.637-.413-1.682-.297-1.019.113-1.479.404-1.713.7-.247.312-.369.789-.369 1.554 0 .793.129 1.171.308 1.371.162.181.519.379 1.442.379.853 0 1.339-.235 1.638-.54.315-.322.527-.827.617-1.553.117-.935-.037-1.395-.241-1.614Zm4.155-.297c-1.044-.116-1.488.091-1.681.297-.204.219-.359.679-.242 1.614.091.726.303 1.231.618 1.553.299.305.784.54 1.638.54.922 0 1.28-.198 1.442-.379.179-.2.308-.578.308-1.371 0-.765-.123-1.242-.37-1.554-.233-.296-.693-.587-1.713-.7Z"></path><path d="M6.25 9.037a.75.75 0 0 1 .75.75v1.501a.75.75 0 0 1-1.5 0V9.787a.75.75 0 0 1 .75-.75Zm4.25.75v1.501a.75.75 0 0 1-1.5 0V9.787a.75.75 0 0 1 1.5 0Z"></path></svg></span></span><span data-component="trailingAction" class="prc-Button-Visual-YNt2F prc-Button-VisualWrap-E4cnq"><svg data-component="Octicon" aria-hidden="true" focusable="false" class="octicon octicon-triangle-down" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" display="inline-block" overflow="visible" style="vertical-align:text-bottom"><path d="m4.427 7.427 3.396 3.396a.25.25 0 0 0 .354 0l3.396-3.396A.25.25 0 0 0 11.396 7H4.604a.25.25 0 0 0-.177.427Z"></path></svg></span></button></div></div></div></div><div class="CopilotChatContainer__mMUlaZ" data-testid="copilot-immersive-embedded-header-button"></div><div class="itemDivider__evIUv4 hide-sm hide-md"></div><button data-component="ActionMenu.Button" type="button" aria-haspopup="true" aria-expanded="false" tabindex="0" class="prc-Button-ButtonBase-9n-Xk actionMenuButton__N7yYcY responsiveCreateMenu__PjQjPd hide-sm" data-loading="false" data-size="medium" data-variant="invisible" aria-labelledby="global-create-menu-tooltip-_R_6f9_" id="_R_mf9_" style="anchor-name: --anchored-overlay-anchor-_R_bmf9H1_;"><span data-component="buttonContent" data-align="center" class="prc-Button-ButtonContent-Iohp5"><span data-component="leadingVisual" class="prc-Button-Visual-YNt2F prc-Button-LeadingVisual-UySKu prc-Button-VisualWrap-E4cnq"><svg data-component="Octicon" aria-hidden="true" focusable="false" class="octicon octicon-plus" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" display="inline-block" overflow="visible" style="vertical-align:text-bottom"><path d="M7.75 2a.75.75 0 0 1 .75.75V7h4.25a.75.75 0 0 1 0 1.5H8.5v4.25a.75.75 0 0 1-1.5 0V8.5H2.75a.75.75 0 0 1 0-1.5H7V2.75A.75.75 0 0 1 7.75 2Z"></path></svg></span></span><span data-component="trailingAction" class="prc-Button-Visual-YNt2F prc-Button-VisualWrap-E4cnq"><svg data-component="Octicon" aria-hidden="true" focusable="false" class="octicon octicon-triangle-down" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" display="inline-block" overflow="visible" style="vertical-align:text-bottom"><path d="m4.427 7.427 3.396 3.396a.25.25 0 0 0 .354 0l3.396-3.396A.25.25 0 0 0 11.396 7H4.604a.25.25 0 0 0-.177.427Z"></path></svg></span></button><span class="prc-TooltipV2-Tooltip-tLeuB" data-direction="s" data-component="Tooltip" aria-hidden="true" id="global-create-menu-tooltip-_R_6f9_" popover="auto">Create new...</span><div data-component="Stack" class="hide-sm hide-md prc-Stack-Stack-UQ9k6" data-gap="condensed" data-direction="horizontal" data-align="center" data-wrap="nowrap" data-justify="start" data-padding="none"><a data-component="IconButton" type="button" class="prc-Button-ButtonBase-9n-Xk appHeaderButton__sQ5HIU prc-Button-IconButton-fyge7" data-loading="false" data-no-visuals="true" data-size="medium" data-variant="invisible" aria-labelledby="_R_2of9_" href="https://github.com/issues" data-discover="true"><svg data-component="Octicon" aria-hidden="true" focusable="false" class="octicon octicon-issue-opened" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" display="inline-block" overflow="visible" style="vertical-align:text-bottom"><path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z"></path><path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0ZM1.5 8a6.5 6.5 0 1 0 13 0 6.5 6.5 0 0 0-13 0Z"></path></svg></a><span class="prc-TooltipV2-Tooltip-tLeuB" data-direction="s" data-component="Tooltip" aria-hidden="true" id="_R_2of9_" popover="auto">All issues</span><a data-component="IconButton" type="button" class="prc-Button-ButtonBase-9n-Xk appHeaderButton__sQ5HIU prc-Button-IconButton-fyge7" data-loading="false" data-no-visuals="true" data-size="medium" data-variant="invisible" aria-labelledby="_R_38f9_" href="https://github.com/pulls" data-discover="true"><svg data-component="Octicon" aria-hidden="true" focusable="false" class="octicon octicon-git-pull-request" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" display="inline-block" overflow="visible" style="vertical-align:text-bottom"><path d="M1.5 3.25a2.25 2.25 0 1 1 3 2.122v5.256a2.251 2.251 0 1 1-1.5 0V5.372A2.25 2.25 0 0 1 1.5 3.25Zm5.677-.177L9.573.677A.25.25 0 0 1 10 .854V2.5h1A2.5 2.5 0 0 1 13.5 5v5.628a2.251 2.251 0 1 1-1.5 0V5a1 1 0 0 0-1-1h-1v1.646a.25.25 0 0 1-.427.177L7.177 3.427a.25.25 0 0 1 0-.354ZM3.75 2.5a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5Zm0 9.5a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5Zm8.25.75a.75.75 0 1 0 1.5 0 .75.75 0 0 0-1.5 0Z"></path></svg></a><span class="prc-TooltipV2-Tooltip-tLeuB" data-direction="s" data-component="Tooltip" aria-hidden="true" id="_R_38f9_" popover="auto">All pull requests</span><a data-component="IconButton" type="button" class="prc-Button-ButtonBase-9n-Xk appHeaderButton__sQ5HIU prc-Button-IconButton-fyge7" data-loading="false" data-no-visuals="true" data-size="medium" data-variant="invisible" aria-labelledby="_R_3of9_" href="https://github.com/repos" data-discover="true"><svg data-component="Octicon" aria-hidden="true" focusable="false" class="octicon octicon-repo" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" display="inline-block" overflow="visible" style="vertical-align:text-bottom"><path d="M2 2.5A2.5 2.5 0 0 1 4.5 0h8.75a.75.75 0 0 1 .75.75v12.5a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 1 0-1.5h1.75v-2h-8a1 1 0 0 0-.714 1.7.75.75 0 1 1-1.072 1.05A2.495 2.495 0 0 1 2 11.5Zm10.5-1h-8a1 1 0 0 0-1 1v6.708A2.486 2.486 0 0 1 4.5 9h8ZM5 12.25a.25.25 0 0 1 .25-.25h3.5a.25.25 0 0 1 .25.25v3.25a.25.25 0 0 1-.4.2l-1.45-1.087a.249.249 0 0 0-.3 0L5.4 15.7a.25.25 0 0 1-.4-.2Z"></path></svg></a><span class="prc-TooltipV2-Tooltip-tLeuB" data-direction="s" data-component="Tooltip" aria-hidden="true" id="_R_3of9_" popover="auto">All repositories</span><div class="d-none"></div></div></div><a data-component="IconButton" type="button" class="prc-Button-ButtonBase-9n-Xk appHeaderButton__sQ5HIU prc-Button-IconButton-fyge7" data-loading="false" data-no-visuals="true" data-size="medium" data-variant="invisible" aria-labelledby="_R_2n9_" href="https://github.com/notifications" data-discover="true"><svg data-component="Octicon" aria-hidden="true" focusable="false" class="octicon octicon-inbox" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" display="inline-block" overflow="visible" style="vertical-align:text-bottom"><path d="M2.8 2.06A1.75 1.75 0 0 1 4.41 1h7.18c.7 0 1.333.417 1.61 1.06l2.74 6.395c.04.093.06.194.06.295v4.5A1.75 1.75 0 0 1 14.25 15H1.75A1.75 1.75 0 0 1 0 13.25v-4.5c0-.101.02-.202.06-.295Zm1.61.44a.25.25 0 0 0-.23.152L1.887 8H4.75a.75.75 0 0 1 .6.3L6.625 10h2.75l1.275-1.7a.75.75 0 0 1 .6-.3h2.863L11.82 2.652a.25.25 0 0 0-.23-.152Zm10.09 7h-2.875l-1.275 1.7a.75.75 0 0 1-.6.3h-3.5a.75.75 0 0 1-.6-.3L4.375 9.5H1.5v3.75c0 .138.112.25.25.25h12.5a.25.25 0 0 0 .25-.25Z"></path></svg></a><span class="prc-TooltipV2-Tooltip-tLeuB" data-direction="s" data-component="Tooltip" aria-hidden="true" popover="auto"><span id="_R_2n9_">You have no unread notifications<span class="prc-src-InternalVisuallyHidden-2YaI6">(<!-- -->g then n<!-- -->)</span></span><span class="prc-TooltipV2-KeybindingHintContainer-Ymj-3 prc-TooltipV2-HasTextBefore-fdOXj" aria-hidden="true" data-component="Tooltip.KeybindingHintContainer"><kbd class="prc-KeybindingHint-KeybindingHint-qpYIs prc-Text-Text-9mHv3" data-component="KeybindingHint" data-testid="keybinding-hint"><span class="prc-components-Chord-DdhWN prc-components-ChordOnEmphasis-O-4BS prc-components-ChordSmall-c-P-x prc-Text-Text-9mHv3" data-component="Text" data-kbd-chord="true"> <span class="prc-src-InternalVisuallyHidden-2YaI6">g</span><span aria-hidden="true">G</span></span><span class="prc-src-InternalVisuallyHidden-2YaI6">then</span> <span class="prc-components-Chord-DdhWN prc-components-ChordOnEmphasis-O-4BS prc-components-ChordSmall-c-P-x prc-Text-Text-9mHv3" data-component="Text" data-kbd-chord="true"> <span class="prc-src-InternalVisuallyHidden-2YaI6">n</span><span aria-hidden="true">N</span></span></kbd></span></span><div class="d-none"></div><div class="container__hAdIgW"><button data-component="IconButton" type="button" aria-haspopup="menu" data-login="drnitishaaggarwal-cloud" class="prc-Button-ButtonBase-9n-Xk anchor__zXCwGI prc-Button-IconButton-fyge7" data-loading="false" data-no-visuals="true" data-size="medium" data-variant="invisible" aria-labelledby="_R_av9_"><img data-component="Avatar" class="prc-Avatar-Avatar-0xaUi" alt="User avatar" width="32" height="32" style="--avatarSize-regular:32px" src="./Class_7_ICSE_Maths_Quiz_Linear_Equations_50_files/354524430" data-testid="github-avatar"></button><span class="prc-TooltipV2-Tooltip-tLeuB" data-direction="s" data-component="Tooltip" aria-hidden="true" id="_R_av9_" popover="auto">Open user navigation menu</span></div></div></div><h2 class="prc-src-InternalVisuallyHidden-2YaI6">Repository navigation</h2><nav class="prc-components-UnderlineWrapper-eT-Yj prc-UnderlineNav-UnderlineWrapper-GWONT LocalNavigation__QHRW7C" aria-label="Repository" data-variant="inset" data-overflow-mode="wrap" data-hide-icons-breakpoint="medium"><ul class="prc-UnderlineNav-ItemsList-oj8gN prc-components-UnderlineItemList-xKlKC" role="list"><li role="presentation" aria-hidden="true" class="prc-UnderlineNav-WrapSpacer--aLgz"></li><li class="prc-UnderlineNav-UnderlineNavItem-syRjR"><a aria-current="page" data-tab-item="code" data-react-nav="code-view" data-react-nav-anchor="code-view-repo-link" class="prc-components-UnderlineItem-7fP-n" href="https://github.com/drnitishaaggarwal-cloud/online-quiz-website-class-7" data-discover="true"><span data-component="icon"><svg data-component="Octicon" aria-hidden="true" focusable="false" class="octicon octicon-code" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" display="inline-block" overflow="visible" style="vertical-align:text-bottom"><path d="m11.28 3.22 4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.749.749 0 0 1-1.275-.326.749.749 0 0 1 .215-.734L13.94 8l-3.72-3.72a.749.749 0 0 1 .326-1.275.749.749 0 0 1 .734.215Zm-6.56 0a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042L2.06 8l3.72 3.72a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215L.47 8.53a.75.75 0 0 1 0-1.06Z"></path></svg></span><span data-component="text" data-content="Code">Code</span></a></li><li class="prc-UnderlineNav-UnderlineNavItem-syRjR"><a data-tab-item="issues" data-react-nav="repo" data-turbo-frame="repo-content-turbo-frame" class="prc-components-UnderlineItem-7fP-n" href="https://github.com/drnitishaaggarwal-cloud/online-quiz-website-class-7/issues" data-discover="true"><span data-component="icon"><svg data-component="Octicon" aria-hidden="true" focusable="false" class="octicon octicon-issue-opened" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" display="inline-block" overflow="visible" style="vertical-align:text-bottom"><path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z"></path><path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0ZM1.5 8a6.5 6.5 0 1 0 13 0 6.5 6.5 0 0 0-13 0Z"></path></svg></span><span data-component="text" data-content="Issues">Issues</span></a></li><li class="prc-UnderlineNav-UnderlineNavItem-syRjR"><a data-tab-item="pull-requests" data-react-nav="repo" data-turbo-frame="repo-content-turbo-frame" class="prc-components-UnderlineItem-7fP-n" href="https://github.com/drnitishaaggarwal-cloud/online-quiz-website-class-7/pulls" data-discover="true"><span data-component="icon"><svg data-component="Octicon" aria-hidden="true" focusable="false" class="octicon octicon-git-pull-request" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" display="inline-block" overflow="visible" style="vertical-align:text-bottom"><path d="M1.5 3.25a2.25 2.25 0 1 1 3 2.122v5.256a2.251 2.251 0 1 1-1.5 0V5.372A2.25 2.25 0 0 1 1.5 3.25Zm5.677-.177L9.573.677A.25.25 0 0 1 10 .854V2.5h1A2.5 2.5 0 0 1 13.5 5v5.628a2.251 2.251 0 1 1-1.5 0V5a1 1 0 0 0-1-1h-1v1.646a.25.25 0 0 1-.427.177L7.177 3.427a.25.25 0 0 1 0-.354ZM3.75 2.5a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5Zm0 9.5a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5Zm8.25.75a.75.75 0 1 0 1.5 0 .75.75 0 0 0-1.5 0Z"></path></svg></span><span data-component="text" data-content="Pull requests">Pull requests</span></a></li><li class="prc-UnderlineNav-UnderlineNavItem-syRjR"><a data-tab-item="actions" data-react-nav="repo" data-turbo-frame="repo-content-turbo-frame" class="prc-components-UnderlineItem-7fP-n" href="https://github.com/drnitishaaggarwal-cloud/online-quiz-website-class-7/actions" data-discover="true"><span data-component="icon"><svg data-component="Octicon" aria-hidden="true" focusable="false" class="octicon octicon-play" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" display="inline-block" overflow="visible" style="vertical-align:text-bottom"><path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0ZM1.5 8a6.5 6.5 0 1 0 13 0 6.5 6.5 0 0 0-13 0Zm4.879-2.773 4.264 2.559a.25.25 0 0 1 0 .428l-4.264 2.559A.25.25 0 0 1 6 10.559V5.442a.25.25 0 0 1 .379-.215Z"></path></svg></span><span data-component="text" data-content="Actions">Actions</span></a></li><li class="prc-UnderlineNav-UnderlineNavItem-syRjR"><a data-tab-item="projects" data-react-nav="repo" data-turbo-frame="repo-content-turbo-frame" class="prc-components-UnderlineItem-7fP-n" href="https://github.com/drnitishaaggarwal-cloud/online-quiz-website-class-7/projects" data-discover="true"><span data-component="icon"><svg data-component="Octicon" aria-hidden="true" focusable="false" class="octicon octicon-table" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" display="inline-block" overflow="visible" style="vertical-align:text-bottom"><path d="M0 1.75C0 .784.784 0 1.75 0h12.5C15.216 0 16 .784 16 1.75v12.5A1.75 1.75 0 0 1 14.25 16H1.75A1.75 1.75 0 0 1 0 14.25ZM6.5 6.5v8h7.75a.25.25 0 0 0 .25-.25V6.5Zm8-1.5V1.75a.25.25 0 0 0-.25-.25H6.5V5Zm-13 1.5v7.75c0 .138.112.25.25.25H5v-8ZM5 5V1.5H1.75a.25.25 0 0 0-.25.25V5Z"></path></svg></span><span data-component="text" data-content="Projects">Projects</span></a></li><li class="prc-UnderlineNav-UnderlineNavItem-syRjR"><a data-tab-item="wiki" data-turbo-frame="repo-content-turbo-frame" class="prc-components-UnderlineItem-7fP-n" href="https://github.com/drnitishaaggarwal-cloud/online-quiz-website-class-7/wiki" data-discover="true"><span data-component="icon"><svg data-component="Octicon" aria-hidden="true" focusable="false" class="octicon octicon-book" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" display="inline-block" overflow="visible" style="vertical-align:text-bottom"><path d="M0 1.75A.75.75 0 0 1 .75 1h4.253c1.227 0 2.317.59 3 1.501A3.743 3.743 0 0 1 11.006 1h4.245a.75.75 0 0 1 .75.75v10.5a.75.75 0 0 1-.75.75h-4.507a2.25 2.25 0 0 0-1.591.659l-.622.621a.75.75 0 0 1-1.06 0l-.622-.621A2.25 2.25 0 0 0 5.258 13H.75a.75.75 0 0 1-.75-.75Zm7.251 10.324.004-5.073-.002-2.253A2.25 2.25 0 0 0 5.003 2.5H1.5v9h3.757a3.75 3.75 0 0 1 1.994.574ZM8.755 4.75l-.004 7.322a3.752 3.752 0 0 1 1.992-.572H14.5v-9h-3.495a2.25 2.25 0 0 0-2.25 2.25Z"></path></svg></span><span data-component="text" data-content="Wiki">Wiki</span></a></li><li class="prc-UnderlineNav-UnderlineNavItem-syRjR"><a data-tab-item="security-and-quality" data-turbo-frame="repo-content-turbo-frame" class="prc-components-UnderlineItem-7fP-n" href="https://github.com/drnitishaaggarwal-cloud/online-quiz-website-class-7/security" data-discover="true"><span data-component="icon"><svg data-component="Octicon" aria-hidden="true" focusable="false" class="octicon octicon-shield" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" display="inline-block" overflow="visible" style="vertical-align:text-bottom"><path d="M7.467.133a1.748 1.748 0 0 1 1.066 0l5.25 1.68A1.75 1.75 0 0 1 15 3.48V7c0 1.566-.32 3.182-1.303 4.682-.983 1.498-2.585 2.813-5.032 3.855a1.697 1.697 0 0 1-1.33 0c-2.447-1.042-4.049-2.357-5.032-3.855C1.32 10.182 1 8.566 1 7V3.48a1.75 1.75 0 0 1 1.217-1.667Zm.61 1.429a.25.25 0 0 0-.153 0l-5.25 1.68a.25.25 0 0 0-.174.238V7c0 1.358.275 2.666 1.057 3.86.784 1.194 2.121 2.34 4.366 3.297a.196.196 0 0 0 .154 0c2.245-.956 3.582-2.104 4.366-3.298C13.225 9.666 13.5 8.36 13.5 7V3.48a.251.251 0 0 0-.174-.237l-5.25-1.68ZM8.75 4.75v3a.75.75 0 0 1-1.5 0v-3a.75.75 0 0 1 1.5 0ZM9 10.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"></path></svg></span><span data-component="text" data-content="Security and quality">Security and quality</span></a></li><li class="prc-UnderlineNav-UnderlineNavItem-syRjR"><a data-tab-item="insights" data-turbo-frame="repo-content-turbo-frame" class="prc-components-UnderlineItem-7fP-n" href="https://github.com/drnitishaaggarwal-cloud/online-quiz-website-class-7/pulse" data-discover="true"><span data-component="icon"><svg data-component="Octicon" aria-hidden="true" focusable="false" class="octicon octicon-graph" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" display="inline-block" overflow="visible" style="vertical-align:text-bottom"><path d="M1.5 1.75V13.5h13.75a.75.75 0 0 1 0 1.5H.75a.75.75 0 0 1-.75-.75V1.75a.75.75 0 0 1 1.5 0Zm14.28 2.53-5.25 5.25a.75.75 0 0 1-1.06 0L7 7.06 4.28 9.78a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042l3.25-3.25a.75.75 0 0 1 1.06 0L10 7.94l4.72-4.72a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042Z"></path></svg></span><span data-component="text" data-content="Insights">Insights</span></a></li><li class="prc-UnderlineNav-UnderlineNavItem-syRjR"><a data-tab-item="settings" data-turbo-frame="repo-content-turbo-frame" class="prc-components-UnderlineItem-7fP-n" href="https://github.com/drnitishaaggarwal-cloud/online-quiz-website-class-7/settings" data-discover="true"><span data-component="icon"><svg data-component="Octicon" aria-hidden="true" focusable="false" class="octicon octicon-gear" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" display="inline-block" overflow="visible" style="vertical-align:text-bottom"><path d="M8 0a8.2 8.2 0 0 1 .701.031C9.444.095 9.99.645 10.16 1.29l.288 1.107c.018.066.079.158.212.224.231.114.454.243.668.386.123.082.233.09.299.071l1.103-.303c.644-.176 1.392.021 1.82.63.27.385.506.792.704 1.218.315.675.111 1.422-.364 1.891l-.814.806c-.049.048-.098.147-.088.294.016.257.016.515 0 .772-.01.147.038.246.088.294l.814.806c.475.469.679 1.216.364 1.891a7.977 7.977 0 0 1-.704 1.217c-.428.61-1.176.807-1.82.63l-1.102-.302c-.067-.019-.177-.011-.3.071a5.909 5.909 0 0 1-.668.386c-.133.066-.194.158-.211.224l-.29 1.106c-.168.646-.715 1.196-1.458 1.26a8.006 8.006 0 0 1-1.402 0c-.743-.064-1.289-.614-1.458-1.26l-.289-1.106c-.018-.066-.079-.158-.212-.224a5.738 5.738 0 0 1-.668-.386c-.123-.082-.233-.09-.299-.071l-1.103.303c-.644.176-1.392-.021-1.82-.63a8.12 8.12 0 0 1-.704-1.218c-.315-.675-.111-1.422.363-1.891l.815-.806c.05-.048.098-.147.088-.294a6.214 6.214 0 0 1 0-.772c.01-.147-.038-.246-.088-.294l-.815-.806C.635 6.045.431 5.298.746 4.623a7.92 7.92 0 0 1 .704-1.217c.428-.61 1.176-.807 1.82-.63l1.102.302c.067.019.177.011.3-.071.214-.143.437-.272.668-.386.133-.066.194-.158.211-.224l.29-1.106C6.009.645 6.556.095 7.299.03 7.53.01 7.764 0 8 0Zm-.571 1.525c-.036.003-.108.036-.137.146l-.289 1.105c-.147.561-.549.967-.998 1.189-.173.086-.34.183-.5.29-.417.278-.97.423-1.529.27l-1.103-.303c-.109-.03-.175.016-.195.045-.22.312-.412.644-.573.99-.014.031-.021.11.059.19l.815.806c.411.406.562.957.53 1.456a4.709 4.709 0 0 0 0 .582c.032.499-.119 1.05-.53 1.456l-.815.806c-.081.08-.073.159-.059.19.162.346.353.677.573.989.02.03.085.076.195.046l1.102-.303c.56-.153 1.113-.008 1.53.27.161.107.328.204.501.29.447.222.85.629.997 1.189l.289 1.105c.029.109.101.143.137.146a6.6 6.6 0 0 0 1.142 0c.036-.003.108-.036.137-.146l.289-1.105c.147-.561.549-.967.998-1.189.173-.086.34-.183.5-.29.417-.278.97-.423 1.529-.27l1.103.303c.109.029.175-.016.195-.045.22-.313.411-.644.573-.99.014-.031.021-.11-.059-.19l-.815-.806c-.411-.406-.562-.957-.53-1.456a4.709 4.709 0 0 0 0-.582c-.032-.499.119-1.05.53-1.456l.815-.806c.081-.08.073-.159.059-.19a6.464 6.464 0 0 0-.573-.989c-.02-.03-.085-.076-.195-.046l-1.102.303c-.56.153-1.113.008-1.53-.27a4.44 4.44 0 0 0-.501-.29c-.447-.222-.85-.629-.997-1.189l-.289-1.105c-.029-.11-.101-.143-.137-.146a6.6 6.6 0 0 0-1.142 0ZM11 8a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM9.5 8a1.5 1.5 0 1 0-3.001.001A1.5 1.5 0 0 0 9.5 8Z"></path></svg></span><span data-component="text" data-content="Settings">Settings</span></a></li></ul><div class="prc-UnderlineNav-MoreButtonContainer-Dnrq6"><div class="prc-UnderlineNav-MoreButtonDivider-dN0a-"></div><button data-component="overflow-menu-button" type="button" aria-haspopup="true" aria-expanded="false" tabindex="0" class="prc-Button-ButtonBase-9n-Xk prc-UnderlineNav-MoreButton-Y8soj" data-loading="false" data-size="medium" data-variant="invisible" id="_R_1afp_" style="anchor-name: --anchored-overlay-anchor-_R_7afpH1_;"><span data-component="buttonContent" data-align="center" class="prc-Button-ButtonContent-Iohp5"><span data-component="text" class="prc-Button-Label-FWkx3"><span>More<span class="prc-src-InternalVisuallyHidden-2YaI6"> items</span></span></span></span><span data-component="trailingAction" class="prc-Button-Visual-YNt2F prc-Button-VisualWrap-E4cnq"><svg data-component="Octicon" aria-hidden="true" focusable="false" class="octicon octicon-triangle-down" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" display="inline-block" overflow="visible" style="vertical-align:text-bottom"><path d="m4.427 7.427 3.396 3.396a.25.25 0 0 0 .354 0l3.396-3.396A.25.25 0 0 0 11.396 7H4.604a.25.25 0 0 0-.177.427Z"></path></svg></span></button></div></nav><div class="d-none"></div></header></div>
+</react-partial>
+
+
+
+
+      <div hidden="hidden" data-view-component="true" class="js-stale-session-flash stale-session-flash flash flash-warn flash-full">
+  
+        <svg aria-hidden="true" data-component="Octicon" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-alert">
+    <path d="M6.457 1.047c.659-1.234 2.427-1.234 3.086 0l6.082 11.378A1.75 1.75 0 0 1 14.082 15H1.918a1.75 1.75 0 0 1-1.543-2.575Zm1.763.707a.25.25 0 0 0-.44 0L1.698 13.132a.25.25 0 0 0 .22.368h12.164a.25.25 0 0 0 .22-.368Zm.53 3.996v2.5a.75.75 0 0 1-1.5 0v-2.5a.75.75 0 0 1 1.5 0ZM9 11a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"></path>
+</svg>
+        <span class="js-stale-session-flash-signed-in" hidden="">You signed in with another tab or window. <a class="Link--inTextBlock" href="https://github.com/drnitishaaggarwal-cloud/online-quiz-website-class-7/upload/main">Reload</a> to refresh your session.</span>
+        <span class="js-stale-session-flash-signed-out" hidden="">You signed out in another tab or window. <a class="Link--inTextBlock" href="https://github.com/drnitishaaggarwal-cloud/online-quiz-website-class-7/upload/main">Reload</a> to refresh your session.</span>
+        <span class="js-stale-session-flash-switched" hidden="">You switched accounts on another tab or window. <a class="Link--inTextBlock" href="https://github.com/drnitishaaggarwal-cloud/online-quiz-website-class-7/upload/main">Reload</a> to refresh your session.</span>
+
+    <button id="icon-button-aca591f6-a5c7-497e-87ba-e9fc3730682a" aria-labelledby="tooltip-a248d5b8-7b66-4c4c-8e11-4b1525e5ade1" type="button" data-view-component="true" class="Button Button--iconOnly Button--invisible Button--medium flash-close js-flash-close">  <svg aria-hidden="true" data-component="Octicon" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-x Button-visual">
+    <path d="M3.72 3.72a.75.75 0 0 1 1.06 0L8 6.94l3.22-3.22a.749.749 0 0 1 1.275.326.749.749 0 0 1-.215.734L9.06 8l3.22 3.22a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215L8 9.06l-3.22 3.22a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042L6.94 8 3.72 4.78a.75.75 0 0 1 0-1.06Z"></path>
+</svg>
+</button><tool-tip id="tooltip-a248d5b8-7b66-4c4c-8e11-4b1525e5ade1" for="icon-button-aca591f6-a5c7-497e-87ba-e9fc3730682a" popover="manual" data-direction="s" data-type="label" data-view-component="true" class="sr-only position-absolute" aria-hidden="true" role="tooltip"><template shadowrootmode="open"><style>
+      :host {
+        --tooltip-top: var(--tool-tip-position-top, 0);
+        --tooltip-left: var(--tool-tip-position-left, 0);
+        padding: var(--overlay-paddingBlock-condensed) var(--overlay-padding-condensed) !important;
+        font: var(--text-body-shorthand-small);
+        color: var(--tooltip-fgColor, var(--fgColor-onEmphasis)) !important;
+        text-align: center;
+        text-decoration: none;
+        text-shadow: none;
+        text-transform: none;
+        letter-spacing: normal;
+        word-wrap: break-word;
+        white-space: pre;
+        background: var(--tooltip-bgColor, var(--bgColor-emphasis)) !important;
+        border-radius: var(--borderRadius-medium);
+        border: 0 !important;
+        opacity: 0;
+        max-width: min(var(--overlay-width-small), 100vw);
+        word-wrap: break-word;
+        white-space: normal;
+        width: max-content !important;
+        inset: var(--tooltip-top) auto auto var(--tooltip-left) !important;
+        overflow: visible !important;
+        text-wrap: balance;
+      }
+
+      :host(:is(.tooltip-n, .tooltip-nw, .tooltip-ne)) {
+        --tooltip-top: calc(var(--tool-tip-position-top, 0) - var(--overlay-offset, 0.25rem));
+        --tooltip-left: var(--tool-tip-position-left);
+      }
+
+      :host(:is(.tooltip-s, .tooltip-sw, .tooltip-se)) {
+        --tooltip-top: calc(var(--tool-tip-position-top, 0) + var(--overlay-offset, 0.25rem));
+        --tooltip-left: var(--tool-tip-position-left);
+      }
+
+      :host(.tooltip-w) {
+        --tooltip-top: var(--tool-tip-position-top);
+        --tooltip-left: calc(var(--tool-tip-position-left, 0) - var(--overlay-offset, 0.25rem));
+      }
+
+      :host(.tooltip-e) {
+        --tooltip-top: var(--tool-tip-position-top);
+        --tooltip-left: calc(var(--tool-tip-position-left, 0) + var(--overlay-offset, 0.25rem));
+      }
+
+      :host:after{
+        position: absolute;
+        display: block;
+        right: 0;
+        left: 0;
+        height: var(--overlay-offset, 0.25rem);
+        content: "";
+      }
+
+      :host(.tooltip-s):after,
+      :host(.tooltip-se):after,
+      :host(.tooltip-sw):after {
+        bottom: 100%
+      }
+
+      :host(.tooltip-n):after,
+      :host(.tooltip-ne):after,
+      :host(.tooltip-nw):after {
+        top: 100%;
+      }
+
+      @keyframes tooltip-appear {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      :host(:popover-open),
+      :host(:popover-open):before {
+        animation-name: tooltip-appear;
+        animation-duration: .1s;
+        animation-fill-mode: forwards;
+        animation-timing-function: ease-in;
+      }
+
+      :host(.\:popover-open) {
+        animation-name: tooltip-appear;
+        animation-duration: .1s;
+        animation-fill-mode: forwards;
+        animation-timing-function: ease-in;
+      }
+
+      @media (forced-colors: active) {
+        :host {
+          outline: solid 1px transparent;
+        }
+
+        :host:before {
+          display: none;
+        }
+      }
+    </style><slot></slot></template>Dismiss alert</tool-tip>
+
+
+  
+</div>
+        
+          
+
+          
+    </div>
+
+  <div id="start-of-content" class="show-on-focus"></div>
+
+
+
+
+
+
+
+
+    <div id="js-flash-container" class="flash-container" data-turbo-replace="">
+
+
+
+
+
+  <template class="js-flash-template"></template>
+</div>
+
+
+    
+  <notification-shelf-watcher data-base-url="https://github.com/notifications/beta/shelf" data-channel="eyJjIjoibm90aWZpY2F0aW9uLWNoYW5nZWQ6MzU0NTI0NDMwIiwidCI6MTc5NDI0MzE3M30=--ae81bf1d300412a98c1aec2e9928420d9ed698a2b96e92fd9042265648e2c493" data-view-component="true" class="js-socket-channel" data-refresh-delay="500" data-catalyst="" data-throttle-delay="5000"></notification-shelf-watcher>
+  <div hidden="" data-initial="" data-target="notification-shelf-watcher.placeholder"></div>
+
+
+
+
+
+
+  <div class="application-main " data-commit-hovercards-enabled="" data-discussion-hovercards-enabled="" data-issue-and-pr-hovercards-enabled="" data-project-hovercards-enabled="">
+        <div itemscope="" itemtype="http://schema.org/SoftwareSourceCode" class="">
+    <main id="js-repo-pjax-container">
+      
+  
+    
+
+
+
+
+
+
+
+
+    
+  <div id="repository-container-header" data-turbo-replace="" hidden=""></div>
+
+
+
+<turbo-frame id="repo-content-turbo-frame" target="_top" data-turbo-action="advance" class="">
+    <div id="repo-content-pjax-container" class="repository-content ">
+    
+
+
+
+    
+      
+<div class="clearfix container-xl tmp-px-3 tmp-px-md-4 tmp-px-lg-5 tmp-mt-4">
+  <h1 class="sr-only">Uploading files to online-quiz-website-class-7</h1>
+
+  <div class="breadcrumb repo-upload-breadcrumb">
+    <h2 class="sr-only">Breadcrumbs</h2>
+    <span class="css-truncate-target">
+      <span class="js-repo-root text-bold"><span class="js-path-segment d-inline-block wb-break-all"><a href="https://github.com/drnitishaaggarwal-cloud/online-quiz-website-class-7/upload/main"><span>online-quiz-website-class-7</span></a></span></span><span class="separator">/</span>
+    </span>
+  </div>
+
+    <h2 class="sr-only">Upload files</h2>
+    <div class="js-upload-manifest-file-container" data-hpc="true">
+      <!-- '"` --><!-- </textarea></xmp> --><form class="d-none js-upload-manifest-form" data-turbo="false" action="https://github.com/upload/manifests" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="p2lWzFhKbzPzz1InyrRj9bjAm_MUN99QnajQdlB01-fRJ8avkN13yvz3-TSOmNAq6PbU9YAQY-StntPhYNiEvQ">
+        <input type="hidden" name="repository_id" value="1451562770">
+        <input type="hidden" name="directory_binary" value="">
+</form>
+      <!-- '"` --><!-- </textarea></xmp> --><form data-turbo="false" action="https://github.com/upload/upload-manifest-files" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="m9jw3QK3R4SNz4lZ0NxYCqbVOiy-IvW0xjoUy_zefGYv4B8RJ6x3LIzBWR1KTTb2aOaeB5ynjPiLvEm6LL6hUA">
+        <file-attachment class="d-block tmp-mb-3 Box blankslate blankslate-spacious js-upload-manifest-file repo-file-upload-target is-file-list is-default" input="upload-manifest-files-input" data-upload-repository-id="1451562770" data-directory-upload-max-files="100" directory="true" data-upload-policy-url="/upload/policies/upload-manifest-files"><input type="hidden" value="9XnD10SSAaH6EsK0lOlzMRXI2Q6vRPt9XCbA9cNQHPI9w4zMr2vAHJ_eXEl_bOk2z4_eC68is395UocfGCVZiQ" data-csrf="true" class="js-data-upload-policy-url-csrf">
+
+          <div class="repo-file-upload-outline"></div>
+          <svg height="32" aria-hidden="true" data-component="Octicon" viewBox="0 0 24 24" version="1.1" width="32" data-view-component="true" class="octicon octicon-file mb-2 tmp-mb-2 color-fg-muted">
+    <path d="M3 3a2 2 0 0 1 2-2h9.982a2 2 0 0 1 1.414.586l4.018 4.018A2 2 0 0 1 21 7.018V21a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Zm2-.5a.5.5 0 0 0-.5.5v18a.5.5 0 0 0 .5.5h14a.5.5 0 0 0 .5-.5V8.5h-4a2 2 0 0 1-2-2v-4Zm10 0v4a.5.5 0 0 0 .5.5h4a.5.5 0 0 0-.146-.336l-4.018-4.018A.5.5 0 0 0 15 2.5Z"></path>
+</svg>
+          <span class="repo-file-upload-text initial-text h2">Drag files here to add them to your repository</span>
+          <span class="repo-file-upload-text alternate-text h2">Drag additional files here to add them to your repository</span>
+          <span class="repo-file-upload-drop-text h2">Drop to upload your files</span>
+
+          <p class="repo-file-upload-choose">
+            Or
+            <input type="file" multiple="" class="manual-file-chooser" id="upload-manifest-files-input" aria-label="Choose your files">
+            <span class="manual-file-chooser-text btn-link" aria-hidden="true" tabindex="-1">choose your files</span>
+          </p>
+
+          <div class="repo-file-upload-errors">
+            <span class="error too-big">
+              Yowza, that’s a big file. Try again with a file smaller than 25MB.
+            </span>
+            <span class="error too-many">
+              Yowza, that’s a lot of files. Try uploading fewer than 100 at a time.
+            </span>
+            <span class="error empty">
+              This file is empty.
+            </span>
+            <span class="error hidden-file">
+              This file is hidden.
+            </span>
+            <span class="error failed-request">
+              Something went really wrong, and we can’t process that file.
+            </span>
+          </div>
+</file-attachment></form>
+      <div class="tmp-mb-3 js-upload-progress" hidden="">
+        <div class="mb-2 f4 js-upload-meter-text">
+          <div class="d-flex flex-items-center mb-1">
+            <svg aria-hidden="true" data-component="Octicon" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-file mr-2 tmp-mr-2">
+    <path d="M2 1.75C2 .784 2.784 0 3.75 0h6.586c.464 0 .909.184 1.237.513l2.914 2.914c.329.328.513.773.513 1.237v9.586A1.75 1.75 0 0 1 13.25 16h-9.5A1.75 1.75 0 0 1 2 14.25Zm1.75-.25a.25.25 0 0 0-.25.25v12.5c0 .138.112.25.25.25h9.5a.25.25 0 0 0 .25-.25V6h-2.75A1.75 1.75 0 0 1 9 4.25V1.5Zm6.75.062V4.25c0 .138.112.25.25.25h2.688l-.011-.013-2.914-2.914-.013-.011Z"></path>
+</svg>
+            <div class="js-upload-meter-filename"></div>
+          </div>
+          <div class="f6">
+            Uploading <span class="js-upload-meter-range-start">1</span> of <span class="js-upload-meter-range-end">1</span> files
+          </div>
+        </div>
+        <div class="Progress Progress--large">
+          <span class="color-bg-success-emphasis js-upload-meter" style="width: 100%;"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="js-manifest-commit-file-template" hidden="">
+      <div class="js-manifest-file-entry Box-row d-flex">
+        <div class="mr-2 flex-shrink-0">
+          <svg aria-hidden="true" data-component="Octicon" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-file">
+    <path d="M2 1.75C2 .784 2.784 0 3.75 0h6.586c.464 0 .909.184 1.237.513l2.914 2.914c.329.328.513.773.513 1.237v9.586A1.75 1.75 0 0 1 13.25 16h-9.5A1.75 1.75 0 0 1 2 14.25Zm1.75-.25a.25.25 0 0 0-.25.25v12.5c0 .138.112.25.25.25h9.5a.25.25 0 0 0 .25-.25V6h-2.75A1.75 1.75 0 0 1 9 4.25V1.5Zm6.75.062V4.25c0 .138.112.25.25.25h2.688l-.011-.013-2.914-2.914-.013-.011Z"></path>
+</svg>
+        </div>
+        <div class="js-filename flex-auto min-width-0 css-truncate css-truncate-target width-fit tmp-mr-3"></div>
+        <!-- '"` --><!-- </textarea></xmp> --><form class="js-remove-manifest-file-form" data-turbo="false" action="https://github.com/drnitishaaggarwal-cloud/online-quiz-website-class-7/upload" accept-charset="UTF-8" method="post"><input type="hidden" name="_method" value="delete" autocomplete="off"><input type="hidden" name="authenticity_token" value="oKm1piym30EXiNTlHQFpfWRG2zXwDIvWs6b7541M7bqcOPKKI7w3o0GyIHvH6tqLp1dpv5TdL3Zx31CVGVombQ">
+          <input type="hidden" name="file_id" value="">
+            <button aria-label="Remove this file" type="submit" data-view-component="true" class="Link--primary btn-link">    <svg aria-hidden="true" data-component="Octicon" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-x">
+    <path d="M3.72 3.72a.75.75 0 0 1 1.06 0L8 6.94l3.22-3.22a.749.749 0 0 1 1.275.326.749.749 0 0 1-.215.734L9.06 8l3.22 3.22a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215L8 9.06l-3.22 3.22a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042L6.94 8 3.72 4.78a.75.75 0 0 1 0-1.06Z"></path>
+</svg>
+</button></form>      </div>
+    </div>
+
+    <div class="Box tmp-mb-3 js-manifest-file-list">
+      <div class="js-manifest-file-list-root"><div class="js-manifest-file-entry Box-row d-flex">
+        <div class="mr-2 flex-shrink-0">
+          <svg aria-hidden="true" data-component="Octicon" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-file">
+    <path d="M2 1.75C2 .784 2.784 0 3.75 0h6.586c.464 0 .909.184 1.237.513l2.914 2.914c.329.328.513.773.513 1.237v9.586A1.75 1.75 0 0 1 13.25 16h-9.5A1.75 1.75 0 0 1 2 14.25Zm1.75-.25a.25.25 0 0 0-.25.25v12.5c0 .138.112.25.25.25h9.5a.25.25 0 0 0 .25-.25V6h-2.75A1.75 1.75 0 0 1 9 4.25V1.5Zm6.75.062V4.25c0 .138.112.25.25.25h2.688l-.011-.013-2.914-2.914-.013-.011Z"></path>
+</svg>
+        </div>
+        <div class="js-filename flex-auto min-width-0 css-truncate css-truncate-target width-fit tmp-mr-3">Class_7_ICSE_Maths_Quiz_Linear_Equations_50.html</div>
+        <!-- '"` --><!-- </textarea></xmp> --><form class="js-remove-manifest-file-form" data-turbo="false" action="https://github.com/drnitishaaggarwal-cloud/online-quiz-website-class-7/upload" accept-charset="UTF-8" method="post"><input type="hidden" name="_method" value="delete" autocomplete="off"><input type="hidden" name="authenticity_token" value="oKm1piym30EXiNTlHQFpfWRG2zXwDIvWs6b7541M7bqcOPKKI7w3o0GyIHvH6tqLp1dpv5TdL3Zx31CVGVombQ">
+          <input type="hidden" name="file_id" value="3912108264">
+            <button aria-label="Remove Class_7_ICSE_Maths_Quiz_Linear_Equations_50.html" type="submit" data-view-component="true" class="Link--primary btn-link">    <svg aria-hidden="true" data-component="Octicon" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-x">
+    <path d="M3.72 3.72a.75.75 0 0 1 1.06 0L8 6.94l3.22-3.22a.749.749 0 0 1 1.275.326.749.749 0 0 1-.215.734L9.06 8l3.22 3.22a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215L8 9.06l-3.22 3.22a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042L6.94 8 3.72 4.78a.75.75 0 0 1 0-1.06Z"></path>
+</svg>
+</button></form>      </div></div>
+    </div>
+
+    <!-- '"` --><!-- </textarea></xmp> --><form class="file-commit-form manifest-commit-form js-file-commit-form js-manifest-commit-form" data-turbo="false" action="https://github.com/drnitishaaggarwal-cloud/online-quiz-website-class-7/upload" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="NtzUyhl5wizPgdOrtvUkkr4v_b4ugQYH7RQ5ieDXK681ViZs4Au4f2lQbqxYUgMXOG1Jj9Ot0IOT-Q4ipnxw_A">
+      <img class="commit-form-avatar float-left rounded-2 avatar-user" src="./Class_7_ICSE_Maths_Quiz_Linear_Equations_50_files/354524430(1)" width="48" height="48" alt="@drnitishaaggarwal-cloud">
+
+      <div class="commit-form position-relative tmp-p-3 mb-2 border rounded-2">
+        <h3>Commit changes</h3>
+
+        <div class="color-fg-severe js-too-long-error d-none">
+          <svg aria-hidden="true" data-component="Octicon" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-light-bulb">
+    <path d="M8 1.5c-2.363 0-4 1.69-4 3.75 0 .984.424 1.625.984 2.304l.214.253c.223.264.47.556.673.848.284.411.537.896.621 1.49a.75.75 0 0 1-1.484.211c-.04-.282-.163-.547-.37-.847a8.456 8.456 0 0 0-.542-.68c-.084-.1-.173-.205-.268-.32C3.201 7.75 2.5 6.766 2.5 5.25 2.5 2.31 4.863 0 8 0s5.5 2.31 5.5 5.25c0 1.516-.701 2.5-1.328 3.259-.095.115-.184.22-.268.319-.207.245-.383.453-.541.681-.208.3-.33.565-.37.847a.751.751 0 0 1-1.485-.212c.084-.593.337-1.078.621-1.489.203-.292.45-.584.673-.848.075-.088.147-.173.213-.253.561-.679.985-1.32.985-2.304 0-2.06-1.637-3.75-4-3.75ZM5.75 12h4.5a.75.75 0 0 1 0 1.5h-4.5a.75.75 0 0 1 0-1.5ZM6 15.25a.75.75 0 0 1 .75-.75h2.5a.75.75 0 0 1 0 1.5h-2.5a.75.75 0 0 1-.75-.75Z"></path>
+</svg>
+          <strong>ProTip!</strong> Great commit summaries contain fewer than 50 characters. Place extra information in the extended description.
+        </div>
+
+        <label for="commit-summary-input" class="sr-only">
+          Commit summary
+        </label>
+        <input id="commit-summary-input" type="text" class="form-control input-block input-contrast js-new-blob-commit-summary js-quick-submit" placeholder="Add files via upload" autocomplete="off" name="message">
+
+        <label for="commit-description-textarea" class="sr-only">
+          Optional extended description
+        </label>
+        <textarea id="commit-description-textarea" name="description" class="form-control input-block input-contrast comment-form-textarea js-quick-submit" placeholder="Add an optional extended description…"></textarea>
+
+        
+
+          
+
+<div class="form-group mb-0" role="radiogroup" aria-label="Commit choice">
+  <div class="form-checkbox tmp-pl-4 mt-0 mb-2">
+    <label class="text-normal">
+      <input type="radio" class="js-quick-pull-choice-option" name="commit-choice" value="direct" autocomplete="off" checked="">
+        <svg aria-hidden="true" data-component="Octicon" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-git-commit color-fg-muted mr-1 tmp-mr-1 text-center">
+    <path d="M11.93 8.5a4.002 4.002 0 0 1-7.86 0H.75a.75.75 0 0 1 0-1.5h3.32a4.002 4.002 0 0 1 7.86 0h3.32a.75.75 0 0 1 0 1.5Zm-1.43-.75a2.5 2.5 0 1 0-5 0 2.5 2.5 0 0 0 5 0Z"></path>
+</svg>
+        Commit directly to the <strong class="branch-name">main</strong> branch.
+    </label>
+  </div>
+  <div class="form-checkbox tmp-pl-4 my-0">
+    <label class="text-normal" aria-live="polite">
+      <input type="radio" class="form-checkbox-details-trigger js-quick-pull-choice-option" name="commit-choice" value="quick-pull" autocomplete="off">
+      <svg aria-hidden="true" data-component="Octicon" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-git-pull-request color-fg-muted mr-1 tmp-mr-1 text-center">
+    <path d="M1.5 3.25a2.25 2.25 0 1 1 3 2.122v5.256a2.251 2.251 0 1 1-1.5 0V5.372A2.25 2.25 0 0 1 1.5 3.25Zm5.677-.177L9.573.677A.25.25 0 0 1 10 .854V2.5h1A2.5 2.5 0 0 1 13.5 5v5.628a2.251 2.251 0 1 1-1.5 0V5a1 1 0 0 0-1-1h-1v1.646a.25.25 0 0 1-.427.177L7.177 3.427a.25.25 0 0 1 0-.354ZM3.75 2.5a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5Zm0 9.5a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5Zm8.25.75a.75.75 0 1 0 1.5 0 .75.75 0 0 0-1.5 0Z"></path>
+</svg>
+      Create a <strong>new branch</strong> for this commit and start a pull request.
+      <a class="Link--inTextBlock" href="https://docs.github.com/articles/using-pull-requests" target="_blank" rel="noreferrer">
+        Learn more about pull requests.
+      </a>
+
+      <div class="form-checkbox-details mt-2">
+        <div class="position-relative mt-2 ">
+          <svg aria-hidden="true" data-component="Octicon" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-git-branch quick-pull-new-branch-icon color-fg-muted text-center position-absolute">
+    <path d="M9.5 3.25a2.25 2.25 0 1 1 3 2.122V6A2.5 2.5 0 0 1 10 8.5H6a1 1 0 0 0-1 1v1.128a2.251 2.251 0 1 1-1.5 0V5.372a2.25 2.25 0 1 1 1.5 0v1.836A2.493 2.493 0 0 1 6 7h4a1 1 0 0 0 1-1v-.628A2.25 2.25 0 0 1 9.5 3.25Zm-6 0a.75.75 0 1 0 1.5 0 .75.75 0 0 0-1.5 0Zm8.25-.75a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5ZM4.25 12a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5Z"></path>
+</svg>
+          <input type="text" value="drnitishaaggarwal-cloud-patch-1" class="form-control input-contrast mr-1 tmp-pl-5 input-monospace js-quick-pull-new-branch-name" placeholder="New branch name" aria-label="New branch name" aria-describedby="quick-pull-normalization-info" data-generated-branch="drnitishaaggarwal-cloud-patch-1" data-check-url="https://github.com/drnitishaaggarwal-cloud/online-quiz-website-class-7/ref_check">
+          <input type="hidden" value="uoYsR2KZCvnhB5ohS3EOGwDzyLDcA8zsITJDfIOXACAmLbbxKG_oAI55PqYesy3xsgX2-kZmyyo172Wybl9Wqw" data-csrf="true" class="js-data-check-url-csrf">
+          <span class="color-fg-muted js-quick-pull-normalization-info" id="quick-pull-normalization-info"></span>
+        </div>
+      </div>
+    </label>
+  </div>
+</div>
+
+<input type="hidden" name="target_branch" class="js-quick-pull-target-branch" value="main" data-default-value="main" autocomplete="off">
+<input type="hidden" name="quick_pull" class="js-quick-pull-choice-value" value="main" autocomplete="off">
+
+        <input type="hidden" name="manifest_id" value="475097679">
+      </div>
+
+        <button data-edit-text="Commit changes" data-pull-text="Propose changes" type="submit" data-view-component="true" class="js-blob-submit btn-primary btn">    Commit changes
+</button>
+      <a class="btn btn-danger" href="https://github.com/drnitishaaggarwal-cloud/online-quiz-website-class-7">Cancel</a>
+</form>
+</div>
+
+
+  </div>
+
+</turbo-frame>
+
+
+
+    </main>
+  </div>
+
+  </div>
+
+          <footer class="footer f6 color-fg-muted color-border-subtle tmp-pt-7 tmp-pb-6 p-responsive" role="contentinfo">
+  <h2 class="sr-only">Footer</h2>
+
+  
+
+
+  <div class="d-flex flex-justify-center flex-items-center flex-column-reverse flex-lg-row flex-wrap flex-lg-nowrap">
+    <div class="d-flex flex-items-center flex-shrink-0 mx-2">
+      <a aria-label="GitHub Homepage" class="footer-octicon mr-2" href="https://github.com/">
+        <svg aria-hidden="true" data-component="Octicon" height="24" viewBox="0 0 24 24" version="1.1" width="24" data-view-component="true" class="octicon octicon-mark-github">
+    <path d="M10.226 17.284c-2.965-.36-5.054-2.493-5.054-5.256 0-1.123.404-2.336 1.078-3.144-.292-.741-.247-2.314.09-2.965.898-.112 2.111.36 2.83 1.01.853-.269 1.752-.404 2.853-.404 1.1 0 1.999.135 2.807.382.696-.629 1.932-1.1 2.83-.988.315.606.36 2.179.067 2.942.72.854 1.101 2 1.101 3.167 0 2.763-2.089 4.852-5.098 5.234.763.494 1.28 1.572 1.28 2.807v2.336c0 .674.561 1.056 1.235.786 4.066-1.55 7.255-5.615 7.255-10.646C23.5 6.188 18.334 1 11.978 1 5.62 1 .5 6.188.5 12.545c0 4.986 3.167 9.12 7.435 10.669.606.225 1.19-.18 1.19-.786V20.63a2.9 2.9 0 0 1-1.078.224c-1.483 0-2.359-.808-2.987-2.313-.247-.607-.517-.966-1.034-1.033-.27-.023-.359-.135-.359-.27 0-.27.45-.471.898-.471.652 0 1.213.404 1.797 1.235.45.651.921.943 1.483.943.561 0 .92-.202 1.437-.719.382-.381.674-.718.944-.943"></path>
+</svg>
+</a>
+      <span>
+        © 2026 GitHub,&nbsp;Inc.
+      </span>
+    </div>
+
+    <nav aria-label="Footer">
+      <h3 class="sr-only" id="sr-footer-heading">Footer navigation</h3>
+
+      <ul class="list-style-none d-flex flex-justify-center flex-wrap mb-2 mb-lg-0" aria-labelledby="sr-footer-heading">
+
+
+          <li class="mx-2">
+            <a data-analytics-event="{&quot;category&quot;:&quot;Footer&quot;,&quot;action&quot;:&quot;go to Terms&quot;,&quot;label&quot;:&quot;text:terms&quot;}" href="https://docs.github.com/site-policy/github-terms/github-terms-of-service" data-view-component="true" class="Link--secondary Link">Terms</a>
+          </li>
+
+          <li class="mx-2">
+            <a data-analytics-event="{&quot;category&quot;:&quot;Footer&quot;,&quot;action&quot;:&quot;go to privacy&quot;,&quot;label&quot;:&quot;text:privacy&quot;}" href="https://docs.github.com/site-policy/privacy-policies/github-privacy-statement" data-view-component="true" class="Link--secondary Link">Privacy</a>
+          </li>
+
+
+            <li class="mx-2">
+              <a data-analytics-event="{&quot;category&quot;:&quot;Footer&quot;,&quot;action&quot;:&quot;go to security&quot;,&quot;label&quot;:&quot;text:security&quot;}" href="https://github.com/security" data-view-component="true" class="Link--secondary Link">Security</a>
+            </li>
+
+            <li class="mx-2">
+              <a data-analytics-event="{&quot;category&quot;:&quot;Footer&quot;,&quot;action&quot;:&quot;go to status&quot;,&quot;label&quot;:&quot;text:status&quot;}" href="https://www.githubstatus.com/" data-view-component="true" class="Link--secondary Link">Status</a>
+            </li>
+
+          <li class="mx-2">
+            <a data-analytics-event="{&quot;category&quot;:&quot;Footer&quot;,&quot;action&quot;:&quot;go to community&quot;,&quot;label&quot;:&quot;text:community&quot;}" href="https://github.community/" data-view-component="true" class="Link--secondary Link">Community</a>
+          </li>
+
+          <li class="mx-2">
+            <a data-analytics-event="{&quot;category&quot;:&quot;Footer&quot;,&quot;action&quot;:&quot;go to docs&quot;,&quot;label&quot;:&quot;text:docs&quot;}" href="https://docs.github.com/" data-view-component="true" class="Link--secondary Link">Docs</a>
+          </li>
+
+          <li class="mx-2">
+            <a data-analytics-event="{&quot;category&quot;:&quot;Footer&quot;,&quot;action&quot;:&quot;go to contact&quot;,&quot;label&quot;:&quot;text:contact&quot;}" href="https://support.github.com/?tags=dotcom-footer" data-view-component="true" class="Link--secondary Link">Contact</a>
+          </li>
+
+          
+<li class="mx-2">
+  <cookie-consent-link data-catalyst="">
+    <button type="button" class="Link--secondary underline-on-hover border-0 p-0 color-bg-transparent" data-action="click:cookie-consent-link#showConsentManagement" data-analytics-event="{&quot;location&quot;:&quot;footer&quot;,&quot;action&quot;:&quot;cookies&quot;,&quot;context&quot;:&quot;subfooter&quot;,&quot;tag&quot;:&quot;link&quot;,&quot;label&quot;:&quot;cookies_link_subfooter_footer&quot;}">
+      Manage cookies
+    </button>
+  </cookie-consent-link>
+</li>
+
+  <li class="mx-2">
+    <cookie-consent-link data-catalyst="">
+      <button type="button" class="Link--secondary underline-on-hover border-0 p-0 color-bg-transparent text-left" data-action="click:cookie-consent-link#showConsentManagement" data-analytics-event="{&quot;location&quot;:&quot;footer&quot;,&quot;action&quot;:&quot;dont_share_info&quot;,&quot;context&quot;:&quot;subfooter&quot;,&quot;tag&quot;:&quot;link&quot;,&quot;label&quot;:&quot;dont_share_info_link_subfooter_footer&quot;}">
+        Do not share my personal information
+      </button>
+    </cookie-consent-link>
+  </li>
+
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+
+
+    <ghcc-consent id="ghcc" class="position-fixed bottom-0 left-0" style="z-index: 999999" data-locale="en" data-initial-cookie-consent-allowed="" data-cookie-consent-required="false" data-catalyst=""></ghcc-consent>
+
+
+
+
+  <div id="ajax-error-message" class="ajax-error-message flash flash-error" hidden="">
+    <svg aria-hidden="true" data-component="Octicon" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-alert">
+    <path d="M6.457 1.047c.659-1.234 2.427-1.234 3.086 0l6.082 11.378A1.75 1.75 0 0 1 14.082 15H1.918a1.75 1.75 0 0 1-1.543-2.575Zm1.763.707a.25.25 0 0 0-.44 0L1.698 13.132a.25.25 0 0 0 .22.368h12.164a.25.25 0 0 0 .22-.368Zm.53 3.996v2.5a.75.75 0 0 1-1.5 0v-2.5a.75.75 0 0 1 1.5 0ZM9 11a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"></path>
+</svg>
+    <button type="button" class="flash-close js-ajax-error-dismiss" aria-label="Dismiss error">
+      <svg aria-hidden="true" data-component="Octicon" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-x">
+    <path d="M3.72 3.72a.75.75 0 0 1 1.06 0L8 6.94l3.22-3.22a.749.749 0 0 1 1.275.326.749.749 0 0 1-.215.734L9.06 8l3.22 3.22a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215L8 9.06l-3.22 3.22a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042L6.94 8 3.72 4.78a.75.75 0 0 1 0-1.06Z"></path>
+</svg>
+    </button>
+    You can’t perform that action at this time.
+  </div>
+
+    <template id="site-details-dialog"></template>
+
+    <div class="Popover js-hovercard-content position-absolute" style="display: none; outline: none;">
+  <div class="Popover-message Popover-message--bottom-left Popover-message--large Box color-shadow-large" style="width:360px;"></div>
+</div>
+
+    <template id="snippet-clipboard-copy-button"></template>
+<template id="snippet-clipboard-copy-button-unpositioned"></template>
+
+
+    <style>
+      .user-mention[href$="/drnitishaaggarwal-cloud"] {
+        color: var(--color-user-mention-fg);
+        background-color: var(--bgColor-attention-muted, var(--color-attention-subtle));
+        border-radius: 2px;
+        margin-left: -2px;
+        margin-right: -2px;
+      }
+      .user-mention[href$="/drnitishaaggarwal-cloud"]:before,
+      .user-mention[href$="/drnitishaaggarwal-cloud"]:after {
+        content: '';
+        display: inline-block;
+        width: 2px;
+      }
+    </style>
+
+
+    </div>
+    <div id="js-global-screen-reader-notice" class="sr-only mt-n1" aria-live="polite" aria-atomic="true"></div>
+    <div id="js-global-screen-reader-notice-assertive" class="sr-only mt-n1" aria-live="assertive" aria-atomic="true"></div>
+  
+
+
+</body></html>
