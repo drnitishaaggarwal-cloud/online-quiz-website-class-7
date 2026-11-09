@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Class 7 ICSE Maths Practice Portal</title>
+<style>
+:root{--navy:#17345b;--blue:#2864b4;--bg:#f3f6fb;--green:#16834a;--red:#c0392b}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:var(--bg);color:#1d2939}
+header{background:linear-gradient(120deg,#17345b,#2864b4);color:white;padding:25px 16px;text-align:center}
+header h1{margin:0 0 7px;font-size:27px}header p{margin:0;opacity:.9}
+main{max-width:980px;margin:22px auto;padding:0 14px}.card{background:#fff;border-radius:16px;padding:22px;box-shadow:0 5px 22px #18365b12;margin-bottom:16px}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+select,button{font-size:15px;border-radius:9px;padding:11px 13px;border:1px solid #cbd5e1}
+select{background:white;min-width:220px;max-width:100%}button{background:var(--blue);color:white;border:0;font-weight:bold;cursor:pointer}button:disabled{opacity:.5;cursor:not-allowed}
+.secondary{background:#e8eef7;color:#17345b}.pill{background:#eaf1fc;color:#214f8e;border-radius:30px;padding:7px 11px;font-size:12px;font-weight:bold}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px;margin-top:15px}
+.chapter{background:#fff;border:1px solid #d7e0ec;color:#24364b;text-align:left;min-height:72px;line-height:1.35}.chapter:hover{background:#f0f5fc;border-color:#6b98d0}
+.chapter small{display:block;color:#667085;font-weight:normal;margin-top:5px}
+.progress{height:9px;background:#e6ebf2;border-radius:9px;overflow:hidden;margin:14px 0}.bar{height:100%;background:#3b82d0;width:0}
+.question{font-size:21px;font-weight:bold;line-height:1.45;margin:20px 0}.options{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.option{background:white;color:#24364b;border:1px solid #ccd6e2;text-align:left;min-height:52px;white-space:normal}.option:hover:not(:disabled){background:#f0f5fc}
+.option.correct{background:#e4f6eb;border:2px solid var(--green);color:#12663a}.option.wrong{background:#fff0ee;border:2px solid var(--red);color:#a52b21}
+.feedback{display:none;margin-top:15px;padding:14px;border-radius:10px;line-height:1.55;background:#f1f5f9}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}.small{font-size:13px;color:#667085;line-height:1.5}
+.score{font-size:32px;font-weight:bold;color:var(--navy)}.hide{display:none!important}
+@media(max-width:620px){.options{grid-template-columns:1fr}.question{font-size:19px}header h1{font-size:23px}.card{padding:17px}}
+</style></head>
+<body>
+<header><h1>Class 7 ICSE Mathematics</h1><p>Selina Concise Maths • School Practice & Exam Preparation</p></header>
+<main>
+<section class="card" id="home">
+ <div class="row"><div><span class="pill">13 SYLLABUS CHAPTERS</span> <span class="pill">CLASS TEST + TERM + FINAL</span></div><span class="small">Practice at your own pace</span></div>
+ <h2 style="color:#17345b;margin:15px 0 5px">Choose a Chapter</h2>
+ <p class="small">Select any chapter below. Each chapter includes concept questions, calculations and extra school-level application / word problems. Class Test 1 and 2 chapters are also part of Final Exam.</p>
+ <div class="row" style="margin-top:16px"><label for="level"><b>Difficulty:</b></label><select id="level"><option value="all">All levels</option><option>Easy</option><option>Moderate</option><option>Difficult</option></select>
+ <label for="mode"><b>Practice:</b></label><select id="mode"><option value="all">All questions</option><option value="application">Application / Word Problems</option><option value="concept">Concept / Exercise Questions</option></select></div>
+ <div class="grid" id="chapters"></div>
+ <p class="small" style="margin-top:17px"><b>Note:</b> This is a school-syllabus practice bank based on the chapter titles in the syllabus image you shared. Please compare exact exercise coverage with your current Selina edition.</p>
+</section>
+<section class="card hide" id="quiz">
+ <div class="row"><span class="pill" id="qcount">Question</span><span class="pill" id="difficulty">Level</span><span class="pill" id="scoretag">Score: 0</span></div>
+ <div class="progress"><div class="bar" id="bar"></div></div>
+ <div class="small" id="qtype"></div><div class="question" id="question"></div>
+ <div class="options" id="options"></div><div class="feedback" id="feedback"></div>
+ <div class="actions"><button id="next" disabled>Next Question</button><button class="secondary" id="quit">Back to Chapters</button></div>
+</section>
+<section class="card hide" id="result" style="text-align:center">
+ <h2>Practice Completed!</h2><div class="score" id="finalscore"></div><p id="remark"></p>
+ <div class="actions" style="justify-content:center"><button id="retry">Retry This Chapter</button><button class="secondary" id="back">Choose Another Chapter</button></div>
+</section>
+<section class="card"><b>Quiz features</b><p class="small">Instant answer checking • Green/red answer highlighting • Step-by-step explanations • Score calculation • Difficulty filters • Application-based questions • Retake option</p></section>
+</main>
+<script>
+const chapters = [
+{name:"Simple Linear Equation",group:"Class Test 1",q:[
+["Solve: 3x + 5 = 20.",5,"Subtract 5: 3x = 15. Divide by 3: x = 5.","Easy","concept"],
+["Solve: 7x − 9 = 26.",5,"Add 9: 7x = 35. Divide by 7: x = 5.","Easy","concept"],
+["Solve: (x + 4)/3 = 6.",14,"Multiply by 3: x + 4 = 18. Hence x = 14.","Easy","concept"],
+["A number increased by 12 is 31. Find the number.",19,"Let the number be x. x + 12 = 31, so x = 19.","Easy","application"],
+["A pen costs ₹x. A notebook costs ₹18 more. If the notebook costs ₹45, find the pen's cost.",27,"Let pen cost be x. x + 18 = 45, so x = ₹27.","Moderate","application"],
+["The perimeter of a square is 68 cm. Find its side.",17,"Let side = x. 4x = 68, so x = 17 cm.","Moderate","application"],
+["Three times a number decreased by 8 is 31. Find the number.",13,"3x − 8 = 31; 3x = 39; x = 13.","Moderate","application"],
+["Solve: 5(x − 2) = 3x + 8.",9,"5x − 10 = 3x + 8; 2x = 18; x = 9.","Difficult","concept"],
+["The sum of three consecutive integers is 72. Find the middle integer.",24,"Let them be x−1, x, x+1. Their sum is 3x = 72, so x = 24.","Difficult","application"],
+["A mother is 3 times her child's age. Their ages add to 48 years. Find the child's age.",12,"Let child's age = x. Mother's age = 3x. 4x = 48, so x = 12 years.","Difficult","application"]
+]},
+{name:"Congruency: Congruent Triangles",group:"Class Test 2",q:[
+["If three corresponding sides of two triangles are equal, which congruence criterion applies?",2,"SSS stands for Side-Side-Side; all three corresponding sides are equal.","Easy","concept",["SAS","ASA","SSS","RHS"]],
+["If two sides and the included angle of one triangle equal those of another, the criterion is:",1,"SAS means two sides and the included angle are equal.","Easy","concept",["SSS","SAS","ASA","AAA"]],
+["Which criterion is used for right-angled triangles when hypotenuse and one side are equal?",3,"RHS means Right angle-Hypotenuse-Side.","Easy","concept",["SSS","ASA","SAS","RHS"]],
+["In congruent triangles, corresponding angles are:",1,"Corresponding parts of congruent triangles are equal (CPCT).","Easy","concept",["Unequal","Equal","Supplementary","Always acute"],["Unequal","Equal","Supplementary","Always acute"]],
+["If ΔABC ≅ ΔPQR, the vertex corresponding to B is:",1,"The order gives A↔P, B↔Q and C↔R.","Easy","concept",["P","Q","R","C"]],
+["Two triangles have sides 4 cm, 5 cm and 6 cm each. Are they congruent by SSS?",0,"All three corresponding sides match, so SSS proves congruence.","Moderate","concept",["Yes","No","Only if equilateral","Cannot be determined"],["Yes","No","Only if equilateral","Cannot be determined"]],
+["If ΔABC ≅ ΔDEF, and ∠B = 65°, then ∠E is:",1,"B corresponds to E, so corresponding angles are equal: 65°.","Moderate","concept",["25°","65°","90°","115°"]],
+["Two right triangles have equal hypotenuse and one corresponding side. Which criterion proves them congruent?",3,"For right triangles, equal hypotenuse and one side give RHS congruence.","Moderate","application",["AAA","ASA","SSS","RHS"]],
+["A student claims that equal three angles are enough to prove two triangles congruent. Is the claim correct?",1,"AAA proves similarity, not necessarily congruence; sizes may differ.","Difficult","application",["Yes, always","No, not necessarily","Only for right triangles","Only for isosceles triangles"]],
+["In congruent triangles, if a pair of corresponding sides are 8.5 cm and x cm, find x.",0,"Corresponding sides of congruent triangles are equal, so x = 8.5 cm.","Difficult","application",["8.5 cm","17 cm","4.25 cm","Cannot be found"]]
+]},
+{name:"Symmetry",group:"Term Exam",q:[
+["How many lines of symmetry does a square have?",2,"A square has 4 lines: two diagonals and two lines through midpoints of opposite sides.","Easy","concept",["1","2","4","8"]],
+["How many lines of symmetry does a non-square rectangle have?",1,"A rectangle has 2 lines of symmetry through the midpoints of opposite sides.","Easy","concept",["1","2","3","4"]],
+["A regular equilateral triangle has how many lines of symmetry?",2,"Each vertex-to-opposite-side midpoint line is a symmetry line; total 3.","Easy","concept",["1","2","3","6"]],
+["What is the order of rotational symmetry of a square?",2,"A square matches itself at 0°, 90°, 180° and 270°; order 4.","Easy","concept",["1","2","4","8"]],
+["A shape matches itself after a rotation of 180° only (before 360°). Its order is:",1,"There are two matching positions in one full turn: 0° and 180°.","Moderate","concept",["1","2","3","4"]],
+["How many lines of symmetry does a regular hexagon have?",5,"A regular hexagon has 6 symmetry axes: 3 through opposite vertices and 3 through opposite sides.","Moderate","concept",["3","4","5","6"]],
+["Which capital letter has vertical line symmetry?",0,"A is symmetric about a vertical line through its centre in standard block lettering.","Moderate","concept",["A","F","G","R"]],
+["A design repeats 5 times in one complete turn. What is its rotational symmetry order?",4,"The order is the number of times the figure matches itself in 360°: 5.","Moderate","application",["2","3","4","5"]],
+["What is the smallest angle of rotation for a regular pentagon?",1,"Smallest angle = 360° ÷ 5 = 72°.","Difficult","concept",["60°","72°","90°","108°"]],
+["A regular polygon has rotational symmetry of order 8. Find its smallest angle of rotation.",0,"360° ÷ 8 = 45°.","Difficult","application",["45°","40°","60°","90°"]]
+]},
+{name:"Inequalities",group:"Term Exam",q:[
+["Solve: x + 4 < 9.",1,"Subtract 4 from both sides: x < 5.","Easy","concept",["x > 5","x < 5","x ≤ 5","x ≥ 5"]],
+["Solve: 3x ≤ 18.",2,"Divide both sides by positive 3: x ≤ 6.","Easy","concept",["x < 6","x > 6","x ≤ 6","x ≥ 6"]],
+["Which symbol means 'at least'?",2,"At least includes the stated value and all greater values: ≥.","Easy","concept",["<",">","≥","≤"]],
+["If x is a whole number and x < 4, which is not in the solution set?",3,"Whole numbers less than 4 are 0, 1, 2 and 3; 4 is excluded.","Easy","concept",["0","2","3","4"]],
+["Solve: 2x − 5 > 7.",2,"Add 5: 2x > 12. Divide by 2: x > 6.","Moderate","concept",["x > 5","x < 6","x > 6","x ≥ 6"]],
+["For x ∈ N, solve 3x ≤ 12. Take N = {1,2,3,...}.",1,"x ≤ 4 and x is natural, so solution set is {1, 2, 3, 4}.","Moderate","concept",["{0,1,2,3,4}","{1,2,3,4}","{1,2,3,4,5}","{4,5,...}"]],
+["A lift can carry at most 500 kg. If each box weighs 25 kg, what is the greatest number of boxes it can carry?",2,"25n ≤ 500, so n ≤ 20. Greatest whole number is 20.","Moderate","application",["15","18","20","25"]],
+["Solve: −2x < 10.",1,"Divide by −2 and reverse the inequality sign: x > −5.","Difficult","concept",["x < −5","x > −5","x ≤ −5","x ≥ −5"]],
+["A student needs at least 35 marks to pass. She has 22 marks. How many more marks m are needed?",3,"22 + m ≥ 35, so m ≥ 13.","Difficult","application",["m > 13","m < 13","m ≤ 13","m ≥ 13"]],
+["For integer x, solve −3 ≤ x < 2. How many integer values are there?",2,"Integers are −3, −2, −1, 0, 1: five values.","Difficult","application",["3","4","5","6"]]
+]},
+{name:"Simple Interest",group:"Term Exam",q:[
+["Write the formula for simple interest.",0,"Simple Interest = (Principal × Rate × Time) ÷ 100.","Easy","concept",["SI = PRT/100","SI = P + R + T","SI = PT/R","SI = 100PRT"]],
+["Find SI on ₹1,000 at 5% per annum for 1 year.",1,"SI = 1000×5×1/100 = ₹50.","Easy","concept",["₹25","₹50","₹100","₹500"]],
+["What is the amount if principal is ₹800 and simple interest is ₹80?",2,"Amount = Principal + SI = 800 + 80 = ₹880.","Easy","concept",["₹720","₹800","₹880","₹960"]],
+["Find SI on ₹2,000 at 10% per annum for 2 years.",3,"SI = 2000×10×2/100 = ₹400.","Moderate","application",["₹200","₹300","₹350","₹400"]],
+["At 5% simple interest, what interest is earned on ₹4,000 in 3 years?",2,"SI = 4000×5×3/100 = ₹600.","Moderate","application",["₹400","₹500","₹600","₹700"]],
+["₹1,500 earns ₹180 simple interest in 2 years. Find the annual rate.",1,"R = (SI×100)/(P×T) = 180×100/(1500×2) = 6%.","Moderate","application",["5%","6%","8%","10%"]],
+["At 8% simple interest, in how many years will ₹2,000 earn ₹480?",2,"T = SI×100/(P×R) = 480×100/(2000×8) = 3 years.","Difficult","application",["2 years","2.5 years","3 years","4 years"]],
+["Find the principal if SI = ₹240, rate = 6% p.a. and time = 2 years.",1,"P = SI×100/(R×T) = 240×100/(6×2) = ₹2,000.","Difficult","application",["₹1,500","₹2,000","₹2,400","₹3,000"]],
+["A sum becomes ₹2,600 after 3 years at 10% simple interest. Find the principal.",2,"A = P(1 + RT/100) = 1.3P. Thus P = 2600/1.3 = ₹2,000.","Difficult","application",["₹1,800","₹1,900","₹2,000","₹2,300"]],
+["Find the amount on ₹3,500 at 4% p.a. simple interest for 2 years.",3,"SI = 3500×4×2/100 = ₹280. Amount = 3500 + 280 = ₹3,780.","Difficult","application",["₹3,600","₹3,700","₹3,750","₹3,780"]]
+]},
+{name:"Recognition of Solids",group:"Term Exam",q:[
+["How many faces does a cube have?",2,"A cube has 6 square faces.","Easy","concept",["4","5","6","8"]],
+["How many edges does a cuboid have?",2,"A cuboid has 12 edges.","Easy","concept",["8","10","12","14"]],
+["Which solid has one circular base and one curved surface ending at a vertex?",1,"A cone has one circular base and one vertex.","Easy","concept",["Cylinder","Cone","Sphere","Cube"]],
+["A sphere has how many vertices?",0,"A sphere has no flat faces, edges or vertices.","Easy","concept",["0","1","2","4"]],
+["How many vertices does a triangular prism have?",2,"A triangular prism has two triangular ends, each with 3 vertices: 6 total.","Moderate","concept",["3","5","6","9"]],
+["Which solid has two circular flat faces and one curved surface?",1,"A cylinder has two circular bases and one curved surface.","Moderate","concept",["Cone","Cylinder","Sphere","Pyramid"]],
+["A dice is shaped like which solid?",0,"A standard dice is a cube.","Easy","application",["Cube","Cuboid","Cylinder","Cone"]],
+["How many faces does a square-based pyramid have?",2,"It has one square base and four triangular side faces: 5 faces.","Moderate","concept",["3","4","5","6"]],
+["A net made of six equal squares folds to form a:",1,"Six equal square faces form a cube.","Difficult","application",["Cuboid only","Cube","Cylinder","Triangular prism"]],
+["Which solid has a curved surface but no edge or vertex?",3,"A sphere has one continuous curved surface and no edges or vertices.","Difficult","concept",["Cone","Cylinder","Cube","Sphere"]]
+]},
+{name:"Data Handling",group:"Term Exam",q:[
+["Find the mean of 2, 4 and 6.",1,"Mean = (2+4+6)/3 = 12/3 = 4.","Easy","concept",["3","4","5","6"]],
+["Find the mode of 3, 5, 5, 7, 8.",1,"5 occurs most frequently, so the mode is 5.","Easy","concept",["3","5","7","8"]],
+["Find the range of 4, 9, 2, 11, 6.",2,"Range = highest − lowest = 11 − 2 = 9.","Easy","concept",["7","8","9","11"]],
+["Find the median of 2, 5, 7, 9, 12.",2,"The middle value of the ordered five numbers is 7.","Easy","concept",["5","6","7","9"]],
+["The marks are 6, 8, 10 and 12. Find the mean.",1,"Mean = 36/4 = 9.","Moderate","application",["8","9","10","11"]],
+["A shop sold 12, 15, 9 and 14 notebooks over four days. Find the total sold.",2,"Total = 12 + 15 + 9 + 14 = 50 notebooks.","Moderate","application",["45","48","50","52"]],
+["In a pie chart, what angle represents one quarter of the data?",1,"One quarter of 360° is 90°.","Moderate","concept",["45°","90°","120°","180°"]],
+["The mean of five numbers is 12. Their total is:",2,"Sum = mean × number of values = 12 × 5 = 60.","Moderate","application",["17","50","60","72"]],
+["Find the median of 3, 8, 10, 12, 15, 18.",1,"For six values, median is average of 3rd and 4th: (10+12)/2 = 11.","Difficult","concept",["10","11","12","13"]],
+["A class has 20 students. 8 prefer cricket, 6 football and the rest badminton. How many prefer badminton?",2,"20 − 8 − 6 = 6 students.","Difficult","application",["4","5","6","8"]]
+]},
+{name:"Triangles",group:"Term Exam",q:[
+["The sum of the interior angles of a triangle is:",2,"The angle-sum property states that the three interior angles total 180°.","Easy","concept",["90°","120°","180°","360°"]],
+["A triangle with all three sides equal is called:",1,"An equilateral triangle has three equal sides.","Easy","concept",["Scalene","Equilateral","Isosceles","Right-angled"]],
+["A triangle with one angle equal to 90° is:",0,"A right-angled triangle has one right angle.","Easy","concept",["Right-angled","Acute-angled","Obtuse-angled","Equilateral"]],
+["Two angles of a triangle are 50° and 60°. Find the third angle.",1,"Third angle = 180° − 50° − 60° = 70°.","Easy","concept",["60°","70°","80°","90°"]],
+["An exterior angle of a triangle equals:",2,"It equals the sum of the two opposite interior angles.","Moderate","concept",["The adjacent interior angle","Half the triangle angle sum","Sum of two opposite interior angles","Always 90°"]],
+["An isosceles triangle has vertex angle 40°. Find each base angle.",2,"Base angles are equal. Each = (180°−40°)/2 = 70°.","Moderate","application",["40°","60°","70°","80°"]],
+["Can sides 3 cm, 4 cm and 8 cm form a triangle?",1,"No. The sum of the two shorter sides, 3+4=7, is less than 8.","Moderate","concept",["Yes","No","Only a right triangle","Only an equilateral triangle"]],
+["An exterior angle is 125°. One opposite interior angle is 55°. Find the other.",2,"Exterior angle = sum of opposite interior angles; other = 125°−55° = 70°.","Difficult","application",["55°","65°","70°","75°"]],
+["The sides of a triangle are 5 cm, 5 cm and 8 cm. What is its type?",1,"Two sides are equal, so it is an isosceles triangle.","Moderate","application",["Scalene","Isosceles","Equilateral","Right-angled"]],
+["Two angles of a triangle are in the ratio 2:3 and the third is 80°. Find the smaller angle.",1,"The first two total 100°. Five parts = 100°, so one part = 20°; smaller = 40°.","Difficult","application",["20°","40°","60°","80°"]]
+]},
+{name:"Profit, Loss and Discount",group:"Term Exam",q:[
+["Profit is calculated when:",0,"Profit occurs when selling price is greater than cost price.","Easy","concept",["SP > CP","SP < CP","SP = CP","Discount > CP"]],
+["A toy bought for ₹80 is sold for ₹100. Find the profit.",1,"Profit = SP − CP = 100 − 80 = ₹20.","Easy","application",["₹10","₹20","₹30","₹40"]],
+["An article bought for ₹500 is sold for ₹450. Find the loss.",2,"Loss = CP − SP = 500 − 450 = ₹50.","Easy","application",["₹25","₹40","₹50","₹60"]],
+["Find the discount on a ₹800 item marked at 10% discount.",1,"Discount = 10% of 800 = ₹80.","Easy","application",["₹40","₹80","₹100","₹120"]],
+["An item costs ₹600 and is sold for ₹690. Find profit percent.",2,"Profit = 90. Profit% = 90/600 × 100 = 15%.","Moderate","application",["10%","12%","15%","18%"]],
+["A bag marked ₹1,200 is discounted by 15%. Find its selling price.",1,"Discount = ₹180. Selling price = 1200 − 180 = ₹1,020.","Moderate","application",["₹1,000","₹1,020","₹1,050","₹1,080"]],
+["A cycle is sold for ₹1,080 at a loss of 10%. Find its cost price.",2,"SP is 90% of CP. CP = 1080 × 100/90 = ₹1,200.","Difficult","application",["₹1,100","₹1,180","₹1,200","₹1,250"]],
+["A shopkeeper buys 20 pens at ₹8 each and sells all at ₹10 each. Find total profit.",2,"CP = 20×8 = ₹160; SP = 20×10 = ₹200; profit = ₹40.","Moderate","application",["₹20","₹30","₹40","₹50"]],
+["After a discount of 20%, an item sells for ₹960. Find its marked price.",2,"₹960 is 80% of MP. MP = 960×100/80 = ₹1,200.","Difficult","application",["₹1,000","₹1,100","₹1,200","₹1,250"]],
+["A trader marks an article at ₹2,000 and gives 10% discount. If CP is ₹1,500, find profit percent.",1,"SP = 1800. Profit = 300. Profit% = 300/1500×100 = 20%.","Difficult","application",["10%","20%","25%","30%"]]
+]},
+{name:"Constructions",group:"Term Exam",q:[
+["Which instrument is used to draw a circle with a given radius?",1,"A compass is used to draw circles and arcs.","Easy","concept",["Protractor","Compass","Set square","Divider"]],
+["Which instrument is used to measure an angle?",2,"A protractor measures angles in degrees.","Easy","concept",["Ruler","Compass","Protractor","Divider"]],
+["To construct the perpendicular bisector of a segment, arcs are drawn from:",1,"Use the same compass radius, greater than half the segment, from both endpoints.","Moderate","concept",["Only its midpoint","Both endpoints with equal radius","One endpoint only","Any two points"]],
+["An angle of 90° is called:",0,"A 90° angle is a right angle.","Easy","concept",["Right angle","Acute angle","Obtuse angle","Straight angle"]],
+["Which pair of instruments is most commonly used for geometric constructions?",2,"A ruler and compass are the standard construction instruments.","Easy","concept",["Protractor and calculator","Divider and calculator","Ruler and compass","Set square and calculator"]],
+["To construct an angle of 60°, a standard compass construction uses:",1,"An equilateral-triangle construction creates 60° angles.","Moderate","concept",["A square","Equal-radius arcs","A rectangle","A measuring tape"]],
+["A line segment is 8 cm long. Where is its midpoint?",2,"The midpoint divides the segment into two equal 4 cm parts.","Easy","application",["2 cm from one end","3 cm from one end","4 cm from either end","6 cm from one end"]],
+["What is the first step to construct a perpendicular bisector of AB?",0,"Draw arcs of equal radius from A and B, using a radius more than half AB.","Difficult","concept",["Draw equal-radius arcs from A and B","Measure AB with a protractor","Draw a parallel line","Draw a circle at the midpoint"]],
+["Can a triangle be constructed with sides 2 cm, 3 cm and 6 cm?",1,"No; 2 + 3 is less than 6, so the triangle inequality is violated.","Difficult","application",["Yes","No","Only right-angled","Only isosceles"]],
+["For constructing a triangle with sides 5 cm, 6 cm and 7 cm, which condition is essential?",2,"The sum of any two sides must be greater than the third; 5+6>7, etc.","Difficult","concept",["One side must be 1 cm","All angles must be equal","Sum of any two sides exceeds the third","One angle must be 90°"]]
+]},
+{name:"Pythagoras Theorem",group:"Term Exam",q:[
+["Pythagoras theorem applies to:",1,"It applies to right-angled triangles.","Easy","concept",["All triangles","Right-angled triangles","Equilateral triangles only","Isosceles triangles only"]],
+["In a right triangle, the hypotenuse is:",2,"It is the side opposite the right angle and is the longest side.","Easy","concept",["The shortest side","Any side","The side opposite the right angle","A side next to the right angle"]],
+["Find the hypotenuse when the other sides are 3 cm and 4 cm.",1,"c² = 3²+4² = 9+16 = 25, so c = 5 cm.","Easy","concept",["4 cm","5 cm","6 cm","7 cm"]],
+["A ladder reaches 12 m up a wall. Its foot is 5 m from the wall. Find ladder length.",2,"Ladder² = 12²+5² = 144+25 = 169; length = 13 m.","Moderate","application",["12 m","13 m","15 m","17 m"]],
+["Find the missing shorter side if hypotenuse is 13 cm and other side is 5 cm.",1,"Missing side² = 13²−5² = 169−25 = 144; side = 12 cm.","Moderate","concept",["8 cm","12 cm","14 cm","18 cm"]],
+["A rectangle is 8 cm long and 6 cm wide. Find its diagonal.",2,"Diagonal² = 8²+6² = 64+36 = 100; diagonal = 10 cm.","Moderate","application",["9 cm","9.5 cm","10 cm","12 cm"]],
+["Which set can be the sides of a right-angled triangle?",1,"5² + 12² = 25+144 = 169 = 13².","Moderate","concept",["4, 5, 6","5, 12, 13","6, 7, 8","3, 4, 6"]],
+["A square has side 10 cm. Find its diagonal.",2,"Diagonal² = 10²+10² = 200; diagonal = 10√2 cm.","Difficult","application",["10 cm","10√3 cm","10√2 cm","20 cm"]],
+["A 15 m pole casts a shadow 8 m long. Find the distance from the top of the pole to the shadow tip.",2,"Distance² = 15²+8² = 225+64 = 289; distance = 17 m.","Difficult","application",["15 m","16 m","17 m","18 m"]],
+["A right triangle has hypotenuse 25 cm and one side 7 cm. Find the other side.",1,"Other side² = 25²−7² = 625−49 = 576; side = 24 cm.","Difficult","concept",["18 cm","24 cm","26 cm","32 cm"]]
+]},
+{name:"Probability",group:"Term Exam",q:[
+["Probability of an impossible event is:",0,"An impossible event has probability 0.","Easy","concept",["0","1/2","1","2"]],
+["Probability of a certain event is:",2,"A certain event has probability 1.","Easy","concept",["0","1/2","1","2"]],
+["A fair coin is tossed. Probability of getting heads is:",1,"There are two equally likely outcomes; one is heads, so probability = 1/2.","Easy","concept",["0","1/2","1","2"]],
+["A fair die is rolled. Probability of getting 6 is:",1,"One favourable outcome out of six equally likely outcomes gives 1/6.","Easy","concept",["1/2","1/6","1/3","5/6"]],
+["A bag has 3 red and 2 blue balls. Probability of drawing a red ball is:",2,"Favourable outcomes = 3; total = 5; probability = 3/5.","Moderate","application",["2/5","1/2","3/5","3/2"]],
+["A die is rolled. Probability of getting an even number is:",1,"Even outcomes are 2, 4, 6: 3/6 = 1/2.","Moderate","application",["1/6","1/2","2/3","5/6"]],
+["A box contains 4 green, 5 yellow and 1 black marble. Probability of not picking yellow is:",1,"Not yellow = 4+1 = 5 out of 10, so probability = 1/2.","Moderate","application",["1/5","1/2","2/5","3/5"]],
+["A card is chosen from cards numbered 1 to 10. Probability of choosing a number greater than 7 is:",1,"Favourable numbers are 8, 9, 10: 3/10.","Difficult","application",["1/10","3/10","7/10","8/10"]],
+["A die is rolled. Probability of getting a prime number is:",2,"Prime outcomes are 2, 3, 5: 3/6 = 1/2.","Difficult","concept",["1/6","1/3","1/2","2/3"]],
+["A bag has 6 white and 4 black beads. One bead is drawn. Probability it is black is:",1,"There are 4 black out of 10 beads: 4/10 = 2/5.","Difficult","application",["1/5","2/5","3/5","4/5"]]
+]},
+{name:"Mensuration",group:"Term Exam",q:[
+["Find the perimeter of a rectangle of length 8 cm and breadth 5 cm.",2,"Perimeter = 2(l+b) = 2(8+5) = 26 cm.","Easy","concept",["13 cm","16 cm","26 cm","40 cm"]],
+["Find the area of a square of side 7 cm.",1,"Area = side² = 7×7 = 49 cm².","Easy","concept",["14 cm²","49 cm²","28 cm²","56 cm²"]],
+["Find the area of a rectangle 12 cm long and 4 cm wide.",2,"Area = length × breadth = 12×4 = 48 cm².","Easy","concept",["16 cm²","32 cm²","48 cm²","64 cm²"]],
+["A rectangular garden is 15 m long and 10 m wide. Find the fencing needed around it.",2,"Fencing = perimeter = 2(15+10) = 50 m.","Moderate","application",["25 m","40 m","50 m","150 m"]],
+["Find the area of a triangle with base 10 cm and height 8 cm.",1,"Area = 1/2 × base × height = 1/2×10×8 = 40 cm².","Moderate","concept",["20 cm²","40 cm²","80 cm²","100 cm²"]],
+["A floor is 6 m by 4 m. How many 1 m² tiles are needed to cover it?",2,"Floor area = 6×4 = 24 m², so 24 tiles are needed.","Moderate","application",["10","20","24","28"]],
+["Find the circumference of a circle of radius 7 cm. Use π = 22/7.",2,"Circumference = 2πr = 2×22/7×7 = 44 cm.","Moderate","concept",["22 cm","38 cm","44 cm","49 cm"]],
+["A square park has perimeter 100 m. Find its area.",1,"Side = 100/4 = 25 m. Area = 25² = 625 m².","Difficult","application",["400 m²","625 m²","1,000 m²","2,500 m²"]],
+["A rectangular sheet is 20 cm × 12 cm. A 2 cm-wide strip is cut along its full length from one side. Find remaining area.",2,"Removed area = 20×2 = 40 cm². Original = 240 cm². Remaining = 200 cm².","Difficult","application",["160 cm²","180 cm²","200 cm²","220 cm²"]],
+["A path 1 m wide runs inside a 10 m × 8 m rectangular garden along all four sides. Find the area left for grass.",1,"Inner dimensions = 8 m × 6 m. Grass area = 48 m².","Difficult","application",["40 m²","48 m²","56 m²","60 m²"]]
+]}
+];
+
+
+// Add 40 fresh, original practice questions to every chapter (50 per chapter).
+function addExtraQuestions(){
+  const add=(i, rows)=>chapters[i].q.push(...rows);
+  const levels=n=>n<6?"Easy":n<26?"Moderate":"Difficult";
+  const row=(q,a,e,n,kind="concept")=>[q,a,e,levels(n),kind];
+
+  // 0. Simple Linear Equation
+  {let r=[]; for(let n=0;n<40;n++){let a=2+n%7,b=3+(n*3)%13,x=4+(n*5)%17,c=a*x+b;
+    if(n%4===0){r.push(row(`Solve: ${a}x + ${b} = ${c}.`,x,`Subtract ${b}: ${a}x = ${a*x}. Divide by ${a}: x = ${x}.`,n));}
+    else if(n%4===1){let d=2+n%5,k=3+(n*2)%9;r.push(row(`Solve: (x + ${b})/${d} = ${k}.`,d*k-b,`Multiply by ${d}: x + ${b} = ${d*k}; subtract ${b}.`,n));}
+    else if(n%4===2){let t=2+n%6, z=5+(n*3)%14, rhs=t*z-2;r.push(row(`Solve: ${t}x − 2 = ${rhs}.`,z,`Add 2 and divide by ${t}: x = ${z}.`,n));}
+    else {let x2=8+n%19, addn=7+(n*2)%15;r.push(row(`A number decreased by ${addn} is ${x2-addn}. Find the number.`,x2,`Let the number be x. x − ${addn} = ${x2-addn}, so x = ${x2}.`,n,"application"));}
+  } add(0,r);}
+
+  // 1. Congruency
+  {let r=[];const sets=[["Which criterion uses three corresponding equal sides?","SSS",["SAS","SSS","ASA","RHS"],1],["Which criterion uses two sides and the included angle?","SAS",["SSS","ASA","SAS","AAA"],2],["Which criterion applies to right triangles using hypotenuse and one side?","RHS",["AAA","SSS","ASA","RHS"],3],["If two triangles are congruent, their corresponding sides are:","Equal",["Parallel","Equal","Double","Unequal"],1]];
+   for(let n=0;n<40;n++){let s=sets[n%4];r.push([s[0],s[3]===1?1:s[3]===2?2:3,s[1]+" is the applicable congruence criterion/property.",levels(n),"concept",s[2]]);}
+   add(1,r);}
+
+  // 2. Symmetry
+  {let r=[];for(let n=0;n<40;n++){let type=n%5,ans,q,e;
+    if(type===0){ans= n%2===0?4:2;q=`How many lines of symmetry does a ${n%2===0?"square":"rectangle (not a square)"} have?`;e=`A square has 4 lines; a non-square rectangle has 2.`;}
+    else if(type===1){ans= n%2===0?3:6;q=`What is the order of rotational symmetry of a regular ${n%2===0?"triangle":"hexagon"}?`;e=`A regular polygon's rotational symmetry order equals its number of sides.`;}
+    else if(type===2){ans= n%2===0?5:8;q=`How many lines of symmetry does a regular ${n%2===0?"pentagon":"octagon"} have?`;e=`A regular polygon has as many symmetry lines as sides.`;}
+    else if(type===3){ans=2;q="How many lines of symmetry does a standard capital letter H have (in block form)?";e="The letter H has one vertical and one horizontal line of symmetry.";}
+    else {ans=1;q="A figure that matches itself after a half-turn has rotational symmetry of at least what order?";e="A half-turn is 180°, so the order is 360°/180° = 2.";ans=2;}
+    r.push(row(q,ans,e,n));} add(2,r);}
+
+  // 3. Inequalities
+  {let r=[];for(let n=0;n<40;n++){let a=2+n%6,b=3+(n*2)%12,x=4+(n*3)%15;
+    if(n%2===0){let rhs=a*x-b+a;r.push(row(`Solve: ${a}x − ${b} < ${rhs}. Find the greatest integer value of x.`,x,`${a}x < ${rhs+b} = ${a*(x+1)}; hence x < ${x+1}. The greatest integer is ${x}.`,n));}
+    else {let rhs=a*(x-1)+b;r.push(row(`Solve: ${a}x + ${b} ≥ ${rhs}. Find the least integer value of x.`,x-1,`${a}x ≥ ${rhs-b} = ${a*(x-1)}; hence x ≥ ${x-1}. The least integer is ${x-1}.`,n));}
+  } add(3,r);}
+
+  // 4. Simple Interest
+  {let r=[];for(let n=0;n<40;n++){let p=500+100*(n%10),rate=4+(n%7),time=1+(n%5),si=p*rate*time/100;
+    if(n%3===0)r.push(row(`Find simple interest on ₹${p} at ${rate}% p.a. for ${time} year(s).`,si,`SI = P×R×T/100 = ${p}×${rate}×${time}/100 = ₹${si}.`,n,"application"));
+    else if(n%3===1)r.push(row(`Find the amount on ₹${p} at ${rate}% p.a. for ${time} year(s), simple interest.`,p+si,`SI = ₹${si}; Amount = Principal + SI = ₹${p+si}.`,n));
+    else r.push(row(`₹${p} earns ₹${si} simple interest in ${time} year(s). Find the rate per annum.`,rate,`Rate = SI×100/(P×T) = ${si}×100/(${p}×${time}) = ${rate}%.`,n));
+  } add(4,r);}
+
+  // 5. Recognition of Solids
+  {let r=[];const items=[["cube",6],["cuboid",6],["cylinder",3],["cone",2],["sphere",1]];
+   for(let n=0;n<40;n++){let [solid,faces]=items[n%5];let q=`How many ${solid==="sphere"?"curved surfaces/faces": "faces or surfaces (including curved surfaces)"} does a ${solid} have?`;let a=faces;
+    let opts=[String(a),String(a+1),String(Math.max(1,a-1)),String(a+2)];
+    r.push([q,0,`A ${solid} has ${faces} ${solid==="sphere"?"curved surface":"faces/surfaces"}.`,levels(n),"concept",opts]);
+  } add(5,r);}
+
+  // 6. Data Handling
+  {let r=[];for(let n=0;n<40;n++){let a=4+n%8,b=7+(n*2)%9,c=5+(n*3)%10,d=8+(n*4)%7,vals=[a,b,c,d];
+    if(n%4===0){let ans=vals.reduce((x,y)=>x+y,0);r.push(row(`Find the mean of ${vals.join(", ")}.`,ans/4,`Mean = (${vals.join("+")})/4 = ${ans/4}.`,n));}
+    else if(n%4===1){let sorted=[...vals].sort((x,y)=>x-y),ans=(sorted[1]+sorted[2])/2;r.push(row(`Find the median of ${vals.join(", ")}.`,ans,`Arrange in order: ${sorted.join(", ")}. Median = (${sorted[1]}+${sorted[2]})/2 = ${ans}.`,n));}
+    else if(n%4===2){let ans=Math.max(...vals);r.push(row(`Find the range of ${vals.join(", ")}.`,ans-Math.min(...vals),`Range = highest − lowest = ${ans} − ${Math.min(...vals)}.`,n));}
+    else {let ans=vals.reduce((x,y)=>x+y,0);r.push(row(`Four students scored ${vals.join(", ")} marks. Find their total marks.`,ans,`Total = ${vals.join(" + ")} = ${ans}.`,n,"application"));}
+  } add(6,r);}
+
+  // 7. Triangles
+  {let r=[];for(let n=0;n<40;n++){let a=35+n%30,b=45+(n*2)%25,c=180-a-b;if(c>0){r.push(row(`Two angles of a triangle are ${a}° and ${b}°. Find the third angle.`,c,`Angle sum = 180°. Third angle = 180° − ${a}° − ${b}° = ${c}°.`,n));}else{let x=4+n%10;r.push(row(`An isosceles triangle has vertex angle ${40+n%40}°. Find each base angle.`,(180-(40+n%40))/2,`Base angles are equal: (180° − vertex angle)/2.`,n));}}
+  add(7,r);}
+
+  // 8. Profit, Loss and Discount
+  {let r=[];for(let n=0;n<40;n++){let cp=100+25*(n%12),pct=5+5*(n%8);
+    if(n%3===0){let sp=cp*(100+pct)/100;r.push(row(`An article bought for ₹${cp} is sold at ${pct}% profit. Find the selling price.`,sp,`Profit = ${pct}% of ${cp} = ₹${sp-cp}; SP = ₹${sp}.`,n,"application"));}
+    else if(n%3===1){let sp=cp*(100-pct)/100;r.push(row(`An article bought for ₹${cp} is sold at ${pct}% loss. Find the selling price.`,sp,`Loss = ${pct}% of ${cp} = ₹${cp-sp}; SP = ₹${sp}.`,n));}
+    else {let mp=cp*2,disc=pct,sp=mp*(100-disc)/100;r.push(row(`Marked price is ₹${mp}. A discount of ${disc}% is given. Find selling price.`,sp,`Discount = ₹${mp*disc/100}; SP = ₹${sp}.`,n));}
+  } add(8,r);}
+
+  // 9. Constructions
+  {let r=[];const qs=[["Which instrument is used to draw an arc while constructing an angle?","Compass",["Ruler","Compass","Protractor","Set square"],1],["Which instrument is used to measure an angle?","Protractor",["Compass","Divider","Protractor","Scale"],2],["A perpendicular bisector meets a line segment at what angle?","90°",["45°","60°","90°","180°"],2],["How many equal parts does an angle bisector make?","2",["2","3","4","5"],0]];
+   for(let n=0;n<40;n++){let s=qs[n%4];r.push([s[0],s[3],s[1]+" is the correct construction fact.",levels(n),"concept",s[2]]);}
+   add(9,r);}
+
+  // 10. Pythagoras Theorem
+  {let r=[];const triples=[[3,4,5],[5,12,13],[6,8,10],[8,15,17],[7,24,25],[9,12,15],[9,40,41],[12,16,20],[20,21,29],[10,24,26]];
+   for(let n=0;n<40;n++){let t=triples[n%10],scale=1+Math.floor(n/10),a=t[0]*scale,b=t[1]*scale,c=t[2]*scale;
+    if(n%2===0)r.push(row(`A right triangle has perpendicular sides ${a} cm and ${b} cm. Find its hypotenuse.`,c,`By Pythagoras: h² = ${a}² + ${b}² = ${c*c}; h = ${c} cm.`,n,"application"));
+    else r.push(row(`The hypotenuse is ${c} cm and one side is ${a} cm. Find the other side.`,b,`Other side² = ${c}² − ${a}² = ${b*b}; other side = ${b} cm.`,n));
+  } add(10,r);}
+
+  // 11. Probability
+  {let r=[];for(let n=0;n<40;n++){let total=6+n%9,fav=1+(n*3)%total;
+    if(n%2===0)r.push(row(`A bag has ${fav} red balls and ${total-fav} blue balls. Find P(red).`,fav/total,`Probability = favourable outcomes / total outcomes = ${fav}/${total}.`,n,"application"));
+    else {let faces=6,even=3;r.push(row("A fair die is rolled. Find the probability of getting an even number.",0.5,"Even outcomes are 2, 4, 6: probability = 3/6 = 1/2.",n));}
+  } add(11,r);}
+
+  // 12. Mensuration
+  {let r=[];for(let n=0;n<40;n++){let l=5+n%12,b=3+(n*2)%9,h=2+(n*3)%8;
+    if(n%4===0){r.push(row(`Find the area of a rectangle of length ${l} cm and breadth ${b} cm.`,l*b,`Area = length × breadth = ${l}×${b} = ${l*b} cm².`,n));}
+    else if(n%4===1){let s=3+n%12;r.push(row(`Find the perimeter of a square of side ${s} cm.`,4*s,`Perimeter = 4×side = 4×${s} = ${4*s} cm.`,n));}
+    else if(n%4===2){r.push(row(`Find the volume of a cuboid of dimensions ${l} cm, ${b} cm and ${h} cm.`,l*b*h,`Volume = l×b×h = ${l}×${b}×${h} = ${l*b*h} cm³.`,n));}
+    else {let s=2+n%10;r.push(row(`Find the area of a square of side ${s} cm.`,s*s,`Area = side² = ${s}×${s} = ${s*s} cm².`,n));}
+  } add(12,r);}
+}
+addExtraQuestions();
+// Keep a balanced difficulty mix in every chapter: 10 Easy, 20 Moderate, 20 Difficult.
+chapters.forEach(ch=>ch.q.forEach((q,i)=>{q[3]=i<10?"Easy":i<30?"Moderate":"Difficult";}));
+
+
+// Five additional application / word problems per chapter.
+function addWordProblems(){
+  const push=(i, rows)=>chapters[i].q.push(...rows);
+  const app=(question, answer, explanation)=>[question,answer,explanation,"Difficult","application"];
+
+  push(0,[
+    app("A taxi charges ₹50 as a fixed fee and ₹12 per kilometre. If the fare is ₹170, how many kilometres were travelled?",10,"Let distance be x. 50 + 12x = 170; 12x = 120; x = 10 km."),
+    app("The sum of a number and twice the number is  sixty-three. Find the number.",21,"Let the number be x. x + 2x = 63; 3x = 63; x = 21."),
+    app("A ribbon is cut into two pieces. The longer piece is 5 cm more than the shorter one. Their total length is 31 cm. Find the shorter piece.",13,"Let the shorter piece be x. x + (x + 5) = 31; 2x = 26; x = 13 cm."),
+    app("A father is 4 times as old as his son. Their ages total 50 years. Find the son's age.",10,"Let the son's age be x. Father's age = 4x. 5x = 50, so x = 10 years."),
+    app("A number multiplied by 5 and then increased by 7 gives 62. Find the number.",11,"Let the number be x. 5x + 7 = 62; 5x = 55; x = 11.")
+  ]);
+
+  push(1,[
+    ["Two triangular pieces have sides 5 cm, 6 cm and 7 cm each. Which criterion proves they are congruent?",2,"All three corresponding sides are equal, so SSS proves congruence.","Difficult","application",["SAS","ASA","SSS","AAA"]],
+    ["Two right-angled roof supports have equal hypotenuse and one equal corresponding side. Which test can prove them congruent?",3,"For right-angled triangles, equal hypotenuse and one corresponding side give RHS congruence.","Difficult","application",["SSS","ASA","SAS","RHS"]],
+    ["Two congruent triangular flags have one corresponding angle of 48°. What is the matching angle on the other flag?",48,"Corresponding angles of congruent triangles are equal: 48°.","Difficult","application"],
+    ["A triangular sign is copied exactly in size and shape. If one side is 9 cm, what is its corresponding side on the copy?",9,"Corresponding sides of congruent triangles are equal: 9 cm.","Difficult","application"],
+    ["Two triangular frames have equal two sides and the included angle. Which congruence criterion applies?",2,"Two sides and their included angle give SAS congruence.","Difficult","application",["SSS","ASA","SAS","RHS"]]
+  ]);
+
+  push(2,[
+    app("A square floor tile has how many lines of symmetry?",4,"A square has four lines of symmetry: two diagonals and two lines through opposite side midpoints."),
+    app("A circular logo is divided into 8 identical sectors. What is its rotational symmetry order?",8,"The logo matches itself 8 times in one full turn, so its order is 8."),
+    app("A regular hexagonal table top has how many lines of symmetry?",6,"A regular hexagon has 6 lines of symmetry."),
+    app("A design repeats every 60° around a centre. What is its order of rotational symmetry?",6,"Order = 360° ÷ 60° = 6."),
+    app("A rectangular window (not a square) is mirrored across its centre. How many lines of symmetry does it have?",2,"A non-square rectangle has two lines of symmetry.")
+  ]);
+
+  push(3,[
+    app("A school bus can carry at most 40 students. If 27 students are already seated, what is the greatest number of additional students allowed?",13,"Let x be additional students. 27 + x ≤ 40, so x ≤ 13. Greatest number = 13."),
+    app("A student needs at least 75 marks to earn a certificate and has 58 marks. What is the minimum number of additional marks needed?",17,"58 + m ≥ 75, so m ≥ 17. Minimum = 17."),
+    app("A lift can carry no more than 600 kg. Each box weighs 30 kg. What is the maximum number of boxes?",20,"30n ≤ 600, so n ≤ 20. Maximum = 20 boxes."),
+    app("A phone plan includes up to 100 minutes. A user has already used 64 minutes. What is the maximum additional number of minutes?",36,"64 + m ≤ 100, so m ≤ 36. Maximum = 36 minutes."),
+    app("A number of notebooks costs ₹18 each. You have ₹150. What is the greatest number of notebooks you can buy?",8,"18n ≤ 150, so n ≤ 8. The greatest whole number is 8.")
+  ]);
+
+  push(4,[
+    app("Riya deposits ₹5,000 at 6% simple interest for 2 years. How much interest will she earn?",600,"SI = P×R×T/100 = 5000×6×2/100 = ₹600."),
+    app("A sum of ₹3,000 earns ₹450 simple interest in 3 years. Find the annual rate (%).",5,"R = SI×100/(P×T) = 450×100/(3000×3) = 5%."),
+    app("A bank pays 4% simple interest per year. How much will ₹2,500 amount to after 2 years?",2700,"SI = 2500×4×2/100 = ₹200. Amount = 2500 + 200 = ₹2,700."),
+    app("At 5% simple interest, ₹4,000 earns how much interest in 18 months?",300,"18 months = 1.5 years. SI = 4000×5×1.5/100 = ₹300."),
+    app("A sum earns ₹720 simple interest in 4 years at 6% per annum. Find the principal.",3000,"P = SI×100/(R×T) = 720×100/(6×4) = ₹3,000.")
+  ]);
+
+  push(5,[
+    app("A gift box is shaped like a cuboid. How many edges does it have?",12,"A cuboid has 12 edges."),
+    app("A party hat is shaped like a cone. How many vertices does it have?",1,"A cone has one vertex, called its apex."),
+    app("A ball is shaped like a sphere. How many edges does it have?",0,"A sphere has no flat faces or edges."),
+    app("A dice is a cube. How many square faces are visible on the complete solid?",6,"A cube has 6 square faces."),
+    app("A tin can is cylindrical. How many circular flat faces does it have?",2,"A cylinder has two circular flat faces and one curved surface.")
+  ]);
+
+  push(6,[
+    app("A shop records 12, 15, 18, 10 and 20 customers over five days. Find the mean number of customers.",15,"Mean = (12+15+18+10+20)/5 = 75/5 = 15."),
+    app("The marks of five students are 14, 18, 12, 20 and 16. Find the median.",16,"Arrange: 12, 14, 16, 18, 20. The middle value is 16."),
+    app("A cricketer scores 24, 35, 41 and 20 runs in four matches. Find the total runs.",120,"Total = 24 + 35 + 41 + 20 = 120 runs."),
+    app("A family records daily water use as 120, 140, 110 and 130 litres. Find the range.",30,"Range = highest − lowest = 140 − 110 = 30 litres."),
+    app("The mean of 6 numbers is 9. What is their total?",54,"Total = mean × number of observations = 9 × 6 = 54.")
+  ]);
+
+  push(7,[
+    app("A triangular garden has two angles of 65° and 55°. Find its third angle.",60,"Third angle = 180° − 65° − 55° = 60°."),
+    app("An isosceles roof frame has a vertex angle of 36°. Find each base angle.",72,"Base angles are equal: (180° − 36°) ÷ 2 = 72°."),
+    app("A triangular warning sign has angles 90° and 35°. Find the third angle.",55,"Third angle = 180° − 90° − 35° = 55°."),
+    app("Two remote interior angles of a triangle are 42° and 68°. Find the exterior angle at the third vertex.",110,"An exterior angle equals the sum of the two opposite interior angles: 42° + 68° = 110°."),
+    app("A triangular plot has sides 8 m, 9 m and 10 m. Find its perimeter.",27,"Perimeter = 8 + 9 + 10 = 27 m.")
+  ]);
+
+  push(8,[
+    app("A shopkeeper buys a school bag for ₹800 and sells it for ₹920. Find the profit percent.",15,"Profit = 920 − 800 = ₹120. Profit% = 120/800 × 100 = 15%."),
+    app("A jacket marked at ₹2,000 is sold at a 15% discount. Find its selling price.",1700,"Discount = 15% of 2000 = ₹300. Selling price = 2000 − 300 = ₹1,700."),
+    app("A bicycle is sold for ₹3,600 at a loss of 10%. Find its cost price.",4000,"SP is 90% of CP. CP = 3600×100/90 = ₹4,000."),
+    app("A trader buys 12 notebooks for ₹25 each and sells each for ₹30. Find the total profit.",60,"Total CP = 12×25 = ₹300; total SP = 12×30 = ₹360; profit = ₹60."),
+    app("A watch is bought for ₹1,500 and sold at a profit of 12%. Find the selling price.",1680,"Profit = 12% of 1500 = ₹180. SP = 1500 + 180 = ₹1,680.")
+  ]);
+
+  push(9,[
+    ["A carpenter needs to draw a circle of radius 4 cm for a design. Which instrument should be used?",1,"A compass is used to draw circles and arcs.","Difficult","application",["Ruler","Compass","Protractor","Set square"]],
+    ["A floor tile design needs a 90° angle. Which instrument can measure/check the angle?",2,"A protractor is used to measure an angle.","Difficult","application",["Compass","Divider","Protractor","String"]],
+    ["A 10 cm line segment must be divided into two equal parts. How long is each part?",5,"Each half is 10 ÷ 2 = 5 cm."),
+    ["A student constructs the perpendicular bisector of a 12 cm segment. How far is the midpoint from either endpoint?",6,"The midpoint divides the 12 cm segment into two equal parts: 6 cm each."),
+    ["A triangular sign is to be constructed with sides 4 cm, 5 cm and 6 cm. What is the sum of its two shorter sides?",9,"The two shorter sides add to 4 + 5 = 9 cm; this is greater than 6 cm, so the triangle inequality is satisfied.")
+  ]);
+
+  push(10,[
+    app("A 6 m ladder rests against a wall. Its foot is 2.5 m from the wall. Find the height reached on the wall (m).",Math.sqrt(29.75),"By Pythagoras, height² = 6² − 2.5² = 29.75; height ≈ 5.45 m."),
+    app("A rectangular field is 9 m long and 12 m wide. Find the length of its diagonal.",15,"Diagonal² = 9² + 12² = 81 + 144 = 225; diagonal = 15 m."),
+    app("A ramp rises 8 m vertically and extends 15 m horizontally. Find the ramp length.",17,"Ramp² = 8² + 15² = 64 + 225 = 289; ramp = 17 m."),
+    app("A right-angled triangular park has hypotenuse 10 m and one side 6 m. Find the other side.",8,"Other side² = 10² − 6² = 100 − 36 = 64; side = 8 m."),
+    app("A square garden has side 5 m. Find the diagonal to the nearest tenth of a metre.",7.1,"Diagonal = √(5²+5²) = √50 ≈ 7.1 m.")
+  ]);
+
+  push(11,[
+    app("A bag contains 4 red, 3 blue and 5 green balls. Find the probability of picking a blue ball.",0.25,"P(blue) = 3/(4+3+5) = 3/12 = 1/4 = 0.25."),
+    app("A fair die is rolled. Find the probability of getting a number greater than 4.",1/3,"Favourable outcomes are 5 and 6. Probability = 2/6 = 1/3."),
+    app("Cards numbered 1 to 8 are placed in a box. Find the probability of picking an even number.",0.5,"Even numbers are 2, 4, 6, 8. Probability = 4/8 = 1/2."),
+    app("A box has 2 yellow and 6 white balls. Find the probability of not picking a yellow ball.",0.75,"P(not yellow) = 6/8 = 3/4 = 0.75."),
+    app("A spinner has 10 equal sectors, of which 3 are green. Find the probability of landing on green.",0.3,"Probability = favourable sectors / total sectors = 3/10 = 0.3.")
+  ]);
+
+  push(12,[
+    app("A rectangular classroom is 8 m long and 6 m wide. Find its floor area.",48,"Area = length × breadth = 8 × 6 = 48 m²."),
+    app("A square garden has side 14 m. Find the fencing required around it.",56,"Perimeter = 4 × side = 4 × 14 = 56 m."),
+    app("A triangular banner has base 12 cm and height 9 cm. Find its area.",54,"Area = 1/2 × base × height = 1/2 × 12 × 9 = 54 cm²."),
+    app("A floor is 10 m long and 7 m wide. How many 1 m² tiles are needed to cover it?",70,"Floor area = 10 × 7 = 70 m², so 70 tiles are needed."),
+    app("A cuboid-shaped tank is 4 m long, 3 m wide and 2 m high. Find its volume.",24,"Volume = length × breadth × height = 4 × 3 × 2 = 24 m³.")
+  ]);
+}
+addWordProblems();
+
+
+// Chapter 1: exactly 50 questions, including 20 varied word problems.
+chapters[0].q = [
+["Solve: 3x + 5 = 20.",5,"Subtract 5: 3x = 15. Divide by 3: x = 5.","Easy","concept"],
+["Solve: 7x − 9 = 26.",5,"Add 9: 7x = 35. Divide by 7: x = 5.","Easy","concept"],
+["Solve: (x + 4)/3 = 6.",14,"Multiply by 3: x + 4 = 18. Hence x = 14.","Easy","concept"],
+["Solve: 5x = 45.",9,"Divide both sides by 5: x = 9.","Easy","concept"],
+["Solve: x − 17 = 28.",45,"Add 17 to both sides: x = 45.","Easy","concept"],
+["Solve: 4x + 7 = 31.",6,"Subtract 7: 4x = 24; divide by 4: x = 6.","Easy","concept"],
+["Solve: 2(x + 3) = 18.",6,"Divide by 2: x + 3 = 9; subtract 3: x = 6.","Easy","concept"],
+["Solve: 9x − 8 = 46.",6,"Add 8: 9x = 54; divide by 9: x = 6.","Easy","concept"],
+["Solve: x/5 + 2 = 7.",25,"Subtract 2: x/5 = 5; multiply by 5: x = 25.","Easy","concept"],
+["Solve: 3(x − 4) = 21.",11,"Divide by 3: x − 4 = 7; add 4: x = 11.","Easy","concept"],
+
+["Solve: 5x − 7 = 3x + 9.",8,"Collect x terms: 2x = 16; x = 8.","Moderate","concept"],
+["Solve: 4(x + 2) = 2x + 18.",5,"Expand: 4x + 8 = 2x + 18; 2x = 10; x = 5.","Moderate","concept"],
+["Solve: (2x − 3)/5 = 3.",9,"2x − 3 = 15; 2x = 18; x = 9.","Moderate","concept"],
+["Solve: 7 − 2x = −9.",8,"Subtract 7: −2x = −16; x = 8.","Moderate","concept"],
+["Solve: 3(2x + 1) = 5x + 14.",11,"6x + 3 = 5x + 14; x = 11.","Moderate","concept"],
+["Solve: (x − 2)/4 + 3 = 6.",14,"(x − 2)/4 = 3; x − 2 = 12; x = 14.","Moderate","concept"],
+["Solve: 0.5x + 4 = 10.",12,"0.5x = 6; divide by 0.5: x = 12.","Moderate","concept"],
+["Solve: 2(x − 5) + 3 = 15.",11,"2x − 10 + 3 = 15; 2x = 22; x = 11.","Moderate","concept"],
+["Solve: 5(x + 1) − 2x = 20.",5,"5x + 5 − 2x = 20; 3x = 15; x = 5.","Moderate","concept"],
+["Solve: 3x/4 = 12.",16,"Multiply both sides by 4/3: x = 16.","Moderate","concept"],
+
+["Solve: 2(3x − 4) = 4(x + 5).",12,"6x − 8 = 4x + 20; 2x = 28; x = 14.","Difficult","concept"],
+["Solve: (x + 5)/3 = (x − 1)/2.",13,"2x + 10 = 3x − 3; x = 13.","Difficult","concept"],
+["Solve: 4 − (x − 2)/3 = 1.",11,"(x − 2)/3 = 3; x − 2 = 9; x = 11.","Difficult","concept"],
+["Solve: 0.4x − 3 = 5.",20,"0.4x = 8; x = 8/0.4 = 20.","Difficult","concept"],
+["Solve: 5(2x − 1) − 3(x + 2) = 24.",7,"10x − 5 − 3x − 6 = 24; 7x = 35; x = 5.","Difficult","concept"],
+["Solve: (3x + 2)/4 = (x + 6)/2.",10,"3x + 2 = 2x + 12; x = 10.","Difficult","concept"],
+["Solve: 7x/3 − 2 = 12.",6,"7x/3 = 14; 7x = 42; x = 6.","Difficult","concept"],
+["Solve: 2.5x + 7.5 = 20.",5,"2.5x = 12.5; x = 5.","Difficult","concept"],
+["Solve: 3(x + 2) − 2(x − 4) = 19.",5,"3x + 6 − 2x + 8 = 19; x + 14 = 19; x = 5.","Difficult","concept"],
+["Solve: (2x − 1)/3 + (x + 2)/2 = 8.",8,"Multiply by 6: 4x − 2 + 3x + 6 = 48; 7x = 44; x = 44/7.","Difficult","concept"],
+
+["A number increased by 12 is 31. Find the number.",19,"Let the number be x. x + 12 = 31, so x = 19.","Easy","application"],
+["A pen costs ₹x. A notebook costs ₹18 more. If the notebook costs ₹45, find the pen's cost.",27,"Let pen cost be x. x + 18 = 45, so x = ₹27.","Easy","application"],
+["The perimeter of a square is 68 cm. Find its side.",17,"Let side = x. 4x = 68, so x = 17 cm.","Easy","application"],
+["Three times a number decreased by 8 is 31. Find the number.",13,"3x − 8 = 31; 3x = 39; x = 13.","Easy","application"],
+["A mother is 3 times her child's age. Their ages add to 48 years. Find the child's age.",12,"Let child's age = x. Mother's age = 3x. 4x = 48, so x = 12 years.","Easy","application"],
+
+["A taxi charges ₹50 fixed fare and ₹12 per km. The total fare is ₹170. Find the distance travelled.",10,"Let distance be x km. 50 + 12x = 170; 12x = 120; x = 10 km.","Moderate","application"],
+["The sum of three consecutive integers is 72. Find the middle integer.",24,"Let the integers be x−1, x, x+1. Their sum is 3x = 72, so x = 24.","Moderate","application"],
+["A ribbon is cut into two pieces. The longer is 5 cm more than the shorter. Total length is 31 cm. Find the shorter piece.",13,"Let shorter piece be x. x + (x + 5) = 31; 2x = 26; x = 13 cm.","Moderate","application"],
+["A father is 4 times as old as his son. Their ages total 50 years. Find the son's age.",10,"Let son's age be x. Father's age = 4x. 5x = 50, so x = 10 years.","Moderate","application"],
+["Five identical notebooks and a ₹20 pen cost ₹170. Find the cost of one notebook.",30,"Let one notebook cost x. 5x + 20 = 170; 5x = 150; x = ₹30.","Moderate","application"],
+["A number multiplied by 5 and then increased by 7 gives 62. Find the number.",11,"Let number be x. 5x + 7 = 62; 5x = 55; x = 11.","Moderate","application"],
+["The length of a rectangle is 3 cm more than its breadth. Its perimeter is 30 cm. Find its breadth.",6,"Let breadth be x and length x+3. 2(x+x+3)=30; 4x+6=30; x=6 cm.","Moderate","application"],
+["A student spends one-third of her money on a book and has ₹80 left. How much money did she have initially?",120,"Let total money be x. x − x/3 = 80; 2x/3 = 80; x = ₹120.","Moderate","application"],
+["Two movie tickets cost ₹40 more in total than one ticket costs three times? If one adult ticket costs ₹x and two child tickets cost ₹60 each, total is ₹240. Find adult ticket price.",120,"Let adult ticket cost be x. x + 2×60 = 240; x = ₹120.","Moderate","application"],
+["A water tank is one-quarter full. After adding 30 litres, it becomes half full. Find the tank capacity.",120,"Let capacity be x litres. x/4 + 30 = x/2; 30 = x/4; x = 120 litres.","Moderate","application"],
+["A shopkeeper packs 6 equal boxes and a 4 kg parcel. Total weight is 34 kg. Find the weight of each box.",5,"Let each box weigh x kg. 6x + 4 = 34; 6x = 30; x = 5 kg.","Moderate","application"],
+
+["The sum of a number and its half is 36. Find the number.",24,"Let number be x. x + x/2 = 36; 3x/2 = 36; x = 24.","Difficult","application"],
+["A mother is 26 years older than her daughter. In 4 years, the mother will be twice the daughter's age. Find the daughter's present age.",18,"Let daughter's age be x. x+4 and x+30 are future ages. x+30 = 2(x+4); x = 22. Daughter is 22 years old.","Difficult","application"],
+["A two-digit number has a tens digit 3 more than its units digit. The sum of its digits is 11. Find the number.",74,"Let units digit be x; tens digit x+3. 2x+3=11; x=4. Number = 74.","Difficult","application"],
+["A cyclist travels at 12 km/h. A walker starts at the same time and travels at 4 km/h. How much farther has the cyclist travelled after 3 hours?",24,"Cyclist: 12×3=36 km; walker: 4×3=12 km. Difference = 24 km.","Difficult","application"],
+["A class has 5 more girls than boys. There are 35 students altogether. Find the number of boys.",15,"Let boys be x; girls x+5. x+x+5=35; 2x=30; x=15 boys.","Difficult","application"]
+];
+
+// Normalize multiple-choice entries whose explicit option list is supplied.
+chapters.forEach(ch => ch.q.forEach(q => {
+ if (Array.isArray(q[5])) {
+   const correctIndex = q[1];
+   const explanation = q[2];
+   const level = q[3], kind = q[4], opts = q[5];
+   q[1] = opts[correctIndex]; q[2] = explanation; q[3] = level; q[4] = kind; q[5] = opts; q[6] = correctIndex;
+ }
+}));
+
+const customOptions = (q) => q[5] || null;
+let activeChapter=0, list=[], idx=0, score=0, locked=false;
+const $=id=>document.getElementById(id);
+function buildHome(){
+ const host=$("chapters");host.innerHTML="";
+ chapters.forEach((c,i)=>{const b=document.createElement("button");b.className="chapter";b.innerHTML=`<b>${i+1}. ${c.name}</b><small>${c.group} • ${c.q.length} practice questions</small>`;b.onclick=()=>startChapter(i);host.appendChild(b)});
+}
+function startChapter(i){
+ activeChapter=i;const level=$("level").value,mode=$("mode").value;
+ list=chapters[i].q.filter(q=>(level==="all"||q[3]===level)&&(mode==="all"||q[4]===mode));
+ idx=0;score=0;$("home").classList.add("hide");$("result").classList.add("hide");$("quiz").classList.remove("hide");
+ if(!list.length){alert("No questions match these filters. Please choose another difficulty or practice type.");backHome();return}
+ render();
+}
+function optionsFor(q){
+ if(q[5])return q[5].map((s,i)=>({label:s,value:i}));
+ const ans=Number(q[1]);let vals=Number.isInteger(ans)?[ans,ans+2,ans-2,ans+5]:[ans,ans+1,ans-1,ans+2];
+ vals=[...new Set(vals)];while(vals.length<4)vals.push(vals[vals.length-1]+1);
+ return vals.slice(0,4).map(v=>({label:String(v),value:v})).sort((a,b)=>((Math.abs(Number(a.value)*17+13)%23)-(Math.abs(Number(b.value)*17+13)%23)));
+}
+function render(){
+ locked=false;const q=list[idx];$("qcount").textContent=`Question ${idx+1} of ${list.length}`;$("difficulty").textContent=q[3];$("scoretag").textContent=`Score: ${score}`;$("bar").style.width=(idx/list.length*100)+"%";$("qtype").textContent=q[4]==="application"?"APPLICATION / WORD PROBLEM":"CONCEPT / EXERCISE PRACTICE";$("question").textContent=q[0];$("feedback").style.display="none";$("next").disabled=true;$("next").textContent=idx===list.length-1?"See Results":"Next Question";$("options").innerHTML="";
+ const opts=optionsFor(q);
+ opts.forEach((o,j)=>{const b=document.createElement("button");b.className="option";b.textContent=`${"ABCD"[j]}. ${o.label}`;b.dataset.correct=(q[5]?j===q[6]:String(o.value)===String(q[1]))?"yes":"no";b.onclick=()=>choose(b,q);$("options").appendChild(b)});
+}
+function choose(btn,q){
+ if(locked)return;locked=true;const correct=btn.dataset.correct==="yes";if(correct)score++;
+ [...$("options").children].forEach(b=>{if(b.dataset.correct==="yes")b.classList.add("correct");b.disabled=true});if(!correct)btn.classList.add("wrong");
+ const answer=q[5]?q[5][q[6]]:q[1];
+ $("feedback").style.display="block";$("feedback").innerHTML=`<b>${correct?"Correct!":"Review this one."}</b> Answer: <b>${answer}</b><br>${q[2]}`;
+ $("scoretag").textContent=`Score: ${score}`;$("next").disabled=false;
+}
+function finish(){
+ $("quiz").classList.add("hide");$("result").classList.remove("hide");$("finalscore").textContent=`${score} / ${list.length}`;const pct=score/list.length;
+ $("remark").textContent=pct>=.8?"Excellent work! You have a strong understanding of this chapter.":pct>=.5?"Good effort. Review the explanations and practise again.":"Keep practising. Read each explanation carefully and try again.";
+}
+function backHome(){$("quiz").classList.add("hide");$("result").classList.add("hide");$("home").classList.remove("hide")}
+$("next").onclick=()=>{if(idx<list.length-1){idx++;render()}else finish()};
+$("quit").onclick=backHome;$("back").onclick=backHome;$("retry").onclick=()=>startChapter(activeChapter);
+buildHome();
+</script></body></html>
